@@ -5,6 +5,7 @@ import plotly.express as px
 
 # Reorganizando os dados application_record
 data = pd.read_csv("./data/application_record.csv")
+data = data.drop_duplicates(subset=data.columns.difference(['ID'])) #Tratando os dados duplicados
 novos_nomes = ['id_pessoa', 'genero', 'tem_carro', 'tem_propriedade', 'qtd_filhos', 'rendimento_anual', 'categoria_de_renda', 'escolaridade', 'estado_civil', 'modo_de_viver', 'aniversario','tem_emprego', 'telefone_movel', 'telefone_comercial', 'telefone', 'email', 'ocupacao', 'tam_familia']
 data.columns = novos_nomes
 data['tem_emprego'] = np.where(data['tem_emprego'] < 0, 'Sim', 'Não')
