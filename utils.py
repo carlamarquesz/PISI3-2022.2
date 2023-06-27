@@ -1,10 +1,11 @@
-import pandas as pd 
 import numpy as np
-# Reorganizando os dados application_record
-data = pd.read_csv("./data/application_record.csv")
-data = data.drop_duplicates(
-    subset=data.columns.difference(["ID"])
-)  # Tratando os dados duplicados
+import pandas as pd
+import matplotlib.pyplot as plt 
+import seaborn as sns
+from imblearn.over_sampling import SMOTE
+
+# Reorganizando os dados credit_card_approval para ML
+df = pd.read_csv("./data/credit_card_approval.csv")
 new_columns = [
     "ID",
     "GENERO",
@@ -12,53 +13,111 @@ new_columns = [
     "POSSUI_PROPRIEDADES",
     "QTD_FILHOS",
     "RENDIMENTO_ANUAL",
-    "CATEGORIA_RENDA",
     "ESCOLARIDADE",
     "ESTADO_CIVIL",
-    "MORADIA",
+    "TIPO_DE_MORADIA",
     "DIAS_ANIVERSARIO",
     "POSSUI_EMPREGO",
     "CELULAR",
-    "TELEFONE_TRABALHO",
-    "TELEFONE",
+    "TELEFONE_COMERCIAL",
+    "TELEFONE_RESIDENCIAL",
     "EMAIL",
     "CARGO",
-    "TAM_FAMILIA",
+    "QTD_MESES",
+    "STATUS_PAGAMENTO",
+    "TARGET",
 ]
-data.columns = new_columns
-data["SALARIO"] = data["RENDIMENTO_ANUAL"] / 12
-data["POSSUI_EMPREGO"] = np.where(data["POSSUI_EMPREGO"] < 0, 1, 0)
-data["POSSUI_CARRO"].replace({"N": 0, "Y": 1}, inplace=True)
-data["POSSUI_PROPRIEDADES"].replace({"N": 0, "Y": 1}, inplace=True)
-data["POSSUI_CARRO"].replace({"N": 0, "Y": 1}, inplace=True)
-data['CARGO'] = data['CARGO'].fillna('Outros')
-data.drop(["CELULAR", "TELEFONE_TRABALHO", "TELEFONE", "EMAIL"], axis=1, inplace=True)
+df.columns = new_columns
+df["GENERO"].replace({"F": 0, "M": 1}, inplace=True)
+df["POSSUI_CARRO"].replace({"Y": 1, "N": 0}, inplace=True)
+df["POSSUI_PROPRIEDADES"].replace({"Y": 1, "N": 0}, inplace=True)
+df["QTD_FILHOS"].replace(
+    {"No children": 0, "1 children": 1, "2+ children": 2}, inplace=True
+)
+df["ESCOLARIDADE"].replace(
+    {
+        "Higher education": 1,
+        "Secondary / secondary special": 2,
+        "Incomplete higher": 3,
+        "Lower secondary": 4,
+        "Academic degree": 5,
+    },
+    inplace=True,
+)
+df["ESTADO_CIVIL"].replace(
+    {
+        "Civil marriage": 1,
+        "Married": 2,
+        "Single / not married": 3,
+        "Separated": 4,
+        "Widow": 5,
+    },
+    inplace=True,
+)
+df["TIPO_DE_MORADIA"].replace(
+    {
+        "Rented apartment": 1,
+        "House / apartment": 2,
+        "Municipal apartment": 3,
+        "With parents": 4,
+        "Co-op apartment": 5,
+        "Office apartment": 6,
+    },
+    inplace=True,
+)
+df["DIAS_ANIVERSARIO"] = np.ceil(
+    pd.to_timedelta(df["DIAS_ANIVERSARIO"], unit="D").dt.days * (-1)
+)
+df["POSSUI_EMPREGO"] = np.where(df["POSSUI_EMPREGO"] < 0, 1, 0)
+df["CARGO"].replace(
+    {
+        "Security staff": 1,
+        "Sales staff": 2,
+        "Accountants": 3,
+        "Laborers": 4,
+        "Managers": 5,
+        "Drivers": 6,
+        "Core staff": 7,
+        "High skill tech staff": 8,
+        "Cleaning staff": 9,
+        "Private service staff": 10,
+        "Cooking staff": 11,
+        "Low-skill Laborers": 12,
+        "Medicine staff": 13,
+        "Secretaries": 14,
+        "Waiters/barmen staff": 15,
+        "HR staff": 16,
+        "Realty agents": 17,
+        "IT staff": 18,
+    },
+    inplace=True,
+)
+df["QTD_MESES"] = np.ceil(pd.to_timedelta(df["QTD_MESES"], unit="D").dt.days * (-1))
+df["STATUS_PAGAMENTO"].replace(
+    {"C": 1, "X": 1, "0": 0, "1": 0, "2": 0, "3": 0, "4": 0, "5": 0},
+    inplace=True,
+)
 
-# Reorganizando os dados credit_record
-data2 = pd.read_csv("./data/credit_record.csv")
-new_columns2 = ["ID", "MES_EXTRAIDO", "STATUS_PAGAMENTO"]
-data2.columns = new_columns2
-dados_filtrados_1 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "X")
-]
-dados_filtrados_2 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "C")
-]
-dados_filtrados_3 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "5")
-]
-dados_filtrados_4 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "4")
-]
-dados_filtrados_5 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "3")
-]
-dados_filtrados_6 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "2")
-]
-dados_filtrados_7 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "1")
-]
-dados_filtrados_8 = data2.loc[
-    (data2["MES_EXTRAIDO"] == 0) & (data2["STATUS_PAGAMENTO"] == "0")
-]
+def texto(filtro_qtd_meses):
+    if filtro_qtd_meses == 0:
+        return 'no mês atual'
+    elif filtro_qtd_meses == 1:
+        return f'no último mês'
+    else:
+        return f'nos últimos {filtro_qtd_meses} meses'
+
+# print(df.sort_values("ID"))
+# #Target desbalanceado que veio do dataset
+# ax = sns.countplot(x='TARGET', data=df) 
+# ax.set_title('Target desbalanceado')
+# #plt.show()
+
+# #Target balanceado com SMOTE
+# X = df.drop('TARGET', axis = 1)
+# y = df['TARGET']
+# smt = SMOTE(random_state=123)  # Instancia um objeto da classe SMOTE
+# X, y = smt.fit_resample(X, y)  # Realiza a reamostragem do conjunto de dados
+# df = pd.concat([X, y], axis=1)    
+# ax2 = sns.countplot(x='TARGET', data=df)
+# ax2.set_title('Target balanceado com SMOTE')
+# #plt.show()
