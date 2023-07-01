@@ -14,15 +14,15 @@ with aba1:
     coluna1, coluna2 = st.columns(2)
     with coluna1:
         # Grafico da porcentagem de posses dos clientes
-        st.caption("Posses dos clientes")
+        st.caption("Pessoas aprovadas de acordo com suas posses")
         porcentagens = (
-            dados[["POSSUI_CARRO", "POSSUI_PROPRIEDADES"]].value_counts(normalize=True)
+            dados[dados["TARGET"] == 0][["POSSUI_CARRO", "POSSUI_PROPRIEDADES"]].value_counts(normalize=True)
             * 100
         )
         categorias = [
-            "Somente Carro",
-            "Somente Propriedade",
-            "Carro e Propriedade",
+            "Somente carro",
+            "Somente propriedade",
+            "Carro e propriedade",
             "Nenhum",
         ]
         cores = ["blue", "green", "orange", "red"]
@@ -34,7 +34,10 @@ with aba1:
             color_discrete_sequence=cores,
             hole=0.5,
         )
-        fig1.update_traces(textposition="inside", textinfo="percent+label")
+        fig1.update_traces(textposition="inside", 
+                           textinfo="percent+label", 
+                           textfont_color="white", 
+                           textfont_size=20)
         st.plotly_chart(fig1, use_container_width=True)
 
         # Gráfico de estilo de moradia dos clientes
@@ -56,6 +59,21 @@ with aba1:
             xaxis_title="Quantidade de Pessoas", yaxis_title="Estilo de moradia"
         )
         st.plotly_chart(fig2, use_container_width=True)
+
+        # st.caption("Pessoas aprovadas de acordo com seus cargos e rendimento anual")
+        # data = dados[dados['TARGET']==1]
+        
+        # fig3 = px.histogram(
+        #     data,
+        #     x = dados['RENDIMENTO_ANUAL'],
+        #     y = dados['CARGO'],
+        #     orientation='h',
+        # )
+        # fig3.update_layout(
+        #     xaxis_title="Rendimento anual", yaxis_title="Rendimento anual"
+        # )
+        # st.plotly_chart(fig3, use_container_width=True)
+        
     with coluna2:
         # Gráfico de cargos dos clientes
         st.caption("Cargos dos clientes")
@@ -88,6 +106,21 @@ with aba1:
             xaxis_title="Quantidade de Pessoas", yaxis_title="Nível de educação"
         )
         st.plotly_chart(fig, use_container_width=True)
+        
+        # st.caption("quantidade de filhos por tipo de moradia")
+        # contagem_filho = df["QTD_FILHOS"].value_counts()
+        
+        # fig4 = px.histogram(
+        #     dados,
+        #     x = df['QTD_FILHOS'],
+        #     y='TIPO_DE_MORADIA',
+        #     orientation='h'
+        # )
+        # fig4.update_layout(
+        #     xaxis_title='Quantidade de filhos',
+        #     yaxis_title='Estilo de moradia'
+        # )
+        # st.plotly_chart(fig4, use_container_width=True)
 # Histórico de atrasos
 with aba2:
     st.subheader("Histórico de atrasos")
