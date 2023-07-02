@@ -14,7 +14,7 @@ with aba1:
     coluna1, coluna2 = st.columns(2)
     with coluna1:
         # Grafico da porcentagem de posses dos clientes
-        st.caption("Pessoas aprovadas de acordo com suas posses")
+        st.caption("Probabilidade de aprovação com base nas posses dos clientes")
         porcentagens = (
             dados[dados["TARGET"] == 0][["POSSUI_CARRO", "POSSUI_PROPRIEDADES"]].value_counts(normalize=True)
             * 100
@@ -38,89 +38,64 @@ with aba1:
                            textinfo="percent+label", 
                            textfont_color="white", 
                            textfont_size=20)
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, use_container_width=True) 
+        with st.expander("Descrição"):
+            st.write("A análise da probabilidade de aprovação com base nas posses dos clientes estuda como características financeiras, como possuir carro, propriedades e rendimento anual, influenciam as chances de aprovação em solicitações de crédito. Calcula-se a proporção de clientes aprovados em diferentes grupos, identificando as características relacionadas a maiores chances de aprovação.") 
+        st.divider()  
 
-        # Gráfico de estilo de moradia dos clientes
-        st.caption("Estilo de moradia dos clientes")
-        contagem_moradia = dados["TIPO_DE_MORADIA"].value_counts()
-        df_contagem_moradia = pd.DataFrame(
-            {
-                "Estilo de moradia": contagem_moradia.index,
-                "Quantidade de Pessoas": contagem_moradia.values,
-            }
-        )
-        fig2 = px.bar(
-            df_contagem_moradia,
-            x="Quantidade de Pessoas",
-            y="Estilo de moradia",
-            orientation="h",
-        )
-        fig2.update_layout(
-            xaxis_title="Quantidade de Pessoas", yaxis_title="Estilo de moradia"
-        )
-        st.plotly_chart(fig2, use_container_width=True)
+        # Calcular o salário mensal com base no rendimento anual
+        st.caption("Média de salário das profissões")
+        dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
+        media_salario = dados.groupby('CARGO')[['SALARIO']].mean().sort_values('SALARIO') 
+        df_salario = pd.DataFrame({
+            "Profissão": media_salario.index,
+            "Média de salário ($)": media_salario['SALARIO'].values.round(0)
+        })
+        fig2 = px.bar(df_salario, x="Média de salário ($)", y="Profissão")
+        fig2.update_layout(xaxis_title="Média de salário ($)", yaxis_title="Profissão")
+        st.plotly_chart(fig2, use_container_width=True) 
+        with st.expander("Descrição"):
+            st.write("O gráfico mostra a relação entre as profissões e o salário mensal com base no rendimento anual, permitindo identificar padrões que indicam risco ou capacidade de pagamento. Isso otimiza a análise de crédito e melhora a tomada de decisões.") 
+            
 
-        # st.caption("Pessoas aprovadas de acordo com seus cargos e rendimento anual")
-        # data = dados[dados['TARGET']==1]
-        
-        # fig3 = px.histogram(
-        #     data,
-        #     x = dados['RENDIMENTO_ANUAL'],
-        #     y = dados['CARGO'],
-        #     orientation='h',
-        # )
-        # fig3.update_layout(
-        #     xaxis_title="Rendimento anual", yaxis_title="Rendimento anual"
-        # )
-        # st.plotly_chart(fig3, use_container_width=True)
-        
     with coluna2:
-        # Gráfico de cargos dos clientes
-        st.caption("Cargos dos clientes")
-        contagem_cargo = dados["CARGO"].value_counts()
+        # Gráfico profissões com menor atraso de pagamento 
+        media_profissoes_sem_atraso = (dados['STATUS2'] == 0).groupby(dados['CARGO']).mean()
+        top_profissoes_sem_atraso = media_profissoes_sem_atraso.nlargest(6) 
+        st.caption("Profissões com menor atraso de pagamentos") 
         df_contagem_cargo = pd.DataFrame(
             {
-                "Cargo": contagem_cargo.index,
-                "Quantidade de Pessoas": contagem_cargo.values,
+                "Profissão": top_profissoes_sem_atraso.index,
+                "Bom histórico de pagamento": top_profissoes_sem_atraso.values * 100,
             }
         )
-        fig = px.bar(
-            df_contagem_cargo, x="Quantidade de Pessoas", y="Cargo", orientation="h"
+        fig3 = px.bar(
+            df_contagem_cargo, x="Bom histórico de pagamento", y="Profissão", orientation="h"
         )
-        fig.update_layout(xaxis_title="Quantidade de Pessoas", yaxis_title="Cargo")
-        st.plotly_chart(fig, use_container_width=True)
+        fig3.update_layout(xaxis_title="Bom histórico de pagamento (%)", yaxis_title="Profissão")  
+        st.plotly_chart(fig3, use_container_width=True)
+        with st.expander("Descrição"):
+            st.write("O gráfico analisa as diferentes profissões e seus respectivos históricos de pagamentos. Ele identifica as 6 profissões com menor atraso de pagamento, o que pode indicar maior confiabilidade financeira.") 
+        st.divider()   
 
-        # gráfico de escolaridade dos clientes
-        st.caption("Escolaridade dos clientes")
-        contagem_escolaridade = dados["ESCOLARIDADE"].value_counts()
-        df_contagem_moradia = pd.DataFrame(
+        # Distribuição do nível de escolaridade com maior risco de inadimplência
+        st.caption("Nível de escolaridade com maior risco de inadimplência")
+        media_escolaridade_com_atraso = (dados['STATUS2'] == 1).groupby(dados['ESCOLARIDADE']).mean() 
+        df_escolaridade = pd.DataFrame(
             {
-                "Nível de educação": contagem_escolaridade.index,
-                "Quantidade de Pessoas": contagem_escolaridade.values,
+                "Nível de educação": media_escolaridade_com_atraso.index,
+                "Risco de inadimplência (%)": media_escolaridade_com_atraso.values * 100,
             }
         )
-        fig = px.bar(
-            df_contagem_moradia, x="Quantidade de Pessoas", y="Nível de educação"
+        fig4 = px.bar(
+            df_escolaridade, x="Risco de inadimplência (%)", y="Nível de educação"
         )
-        fig.update_layout(
-            xaxis_title="Quantidade de Pessoas", yaxis_title="Nível de educação"
+        fig4.update_layout(
+            xaxis_title="Risco de inadimplência (%)", yaxis_title="Nível de educação"
         )
-        st.plotly_chart(fig, use_container_width=True)
-        
-        # st.caption("quantidade de filhos por tipo de moradia")
-        # contagem_filho = df["QTD_FILHOS"].value_counts()
-        
-        # fig4 = px.histogram(
-        #     dados,
-        #     x = df['QTD_FILHOS'],
-        #     y='TIPO_DE_MORADIA',
-        #     orientation='h'
-        # )
-        # fig4.update_layout(
-        #     xaxis_title='Quantidade de filhos',
-        #     yaxis_title='Estilo de moradia'
-        # )
-        # st.plotly_chart(fig4, use_container_width=True)
+        st.plotly_chart(fig4, use_container_width=True) 
+        with st.expander("Descrição"):
+            st.write("O gráfico analisa a relação entre o nível de escolaridade dos indivíduos e seu histórico de pagamento. É possível identificar quais níveis de escolaridade estão associados a um maior risco de inadimplência, auxiliando na tomada de decisões relacionadas à concessão de crédito") 
 # Histórico de atrasos
 with aba2:
     st.subheader("Histórico de atrasos")

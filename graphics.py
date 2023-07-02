@@ -25,4 +25,10 @@ new_columns = [
     "TARGET",
 ]
 dados.columns = new_columns   
+dados['STATUS2'] = dados['STATUS_PAGAMENTO']
+dados["STATUS2"].replace(
+            {"C": 0, "X": 0, "0": 1, "1": 1, "2": 1, "3": 1, "4": 1, "5": 1},
+            inplace=True,
+        )
 dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
+print(dados.head()) 
