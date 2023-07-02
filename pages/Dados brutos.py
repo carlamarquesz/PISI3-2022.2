@@ -132,8 +132,8 @@ with aba3:
                        "Is there a phone",
                        "Is there an email",
                        "Job",
-                       "Record month: Record month: The month of the extracted data is the starting point, backwards, 0 is the current month, -1 is the previous month, and so on",
-                       "Status 0: 1-29 days past due 1: 30-59 days past due 2: 60-89 days overdue 3: 90-119 days overdue 4: 120-149 days overdue 5: Overdue or bad debts, write-offs for more than 150 days C: paid off that month X: No loan for the month",
+                       "Record month: The month of the extracted data is the starting point, backwards, 0 is the current month, -1 is the previous month, and so on",
+                       "Status 0: 1-29 days past due, 1: 30-59 days past due, 2: 60-89 days overdue, 3: 90-119 days overdue, 4: 120-149 days overdue, 5: Overdue or bad debts, write-offs for more than 150 days, C: paid off that month, X: No loan for the month",
                        "Target: Risk user are marked as '1', else are '0'"
                        ],
 
@@ -155,8 +155,8 @@ with aba3:
                         "Possui telefone fixo",
                         "Tem um e-mail", 
                         "Profissão", 
-                        "Mês de registro: Mês do registro: O mês dos dados extraídos é o ponto de partida, contando retroativamente. 0 representa o mês atual, -1 representa o mês anterior e assim por diante ",
-                        "Status: 0: 1-29 dias em atraso 1: 30-59 dias em atraso 2: 60-89 dias em atraso 3: 90-119 dias em atraso 4: 120-149 dias em atraso 5: Vencido ou dívidas ruins, baixas contábeis por mais de 150 dias C: Quitado naquele mês X: Sem empréstimo no mês",
+                        "Mês de registro: O mês dos dados extraídos é o ponto de partida, contando retroativamente. 0 representa o mês atual, -1 representa o mês anterior e assim por diante ",
+                        "Status: 0: 1-29 dias em atraso, 1: 30-59 dias em atraso 2: 60-89 dias em atraso, 3: 90-119 dias em atraso, 4: 120-149 dias em atraso, 5: Vencido ou dívidas ruins, baixas contábeis por mais de 150 dias, C: Quitado naquele mês, X: Sem empréstimo no mês",
                         "Target: Usuários de risco são marcados como '1', caso contrário são '0'"
                        ]
                     }
