@@ -48,26 +48,118 @@ with aba3:
     st.subheader("Dicionário de dados")
 
     dicionario_dados = {
-        "ID": "Client number",
-        "CODE_GENDER": "Gender",
-        "FLAG_OWN_CAR": "Is there a car",
-        "FLAG_OWN_REALTY": "Is there a property",
-        "CNT_CHILDREN": "Number of children",
-        "AMT_INCOME_TOTAL": "Annual income",
-        "NAME_INCOME_TYPE": "Income category",
-        "NAME_EDUCATION_TYPE": "Education level",
-        "NAME_FAMILY_STATUS": "Marital status",
-        "NAME_HOUSING_TYPE": "Way of living",
-        "DAYS_BIRTH": "Birthday - Count backwards from current day (0), -1 means yesterday",
-        "DAYS_EMPLOYED": "Start date of employment (Count backwards from current day(0). If positive, it means the person currently unemployed.)",
-        "FLAG_MOBIL": "Is there a mobile phone",
-        "FLAG_WORK_PHONE": "Is there a work phone",
-        "FLAG_PHONE": "Is there a phone",
-        "FLAG_EMAIL": "Is there an email",
-        "OCCUPATION_TYPE": "Occupation",
-        "CNT_FAM_MEMBERS": "Family size",
-    }
-    df_dicionario = pd.DataFrame(
-        dicionario_dados.items(), columns=["Coluna", "Descrição"]
-    )
-    st.dataframe(df_dicionario, use_container_width=True)
+        "Column":[
+                    "ID",
+                    "CODE_GENDER",
+                    "FLAG_OWN_CAR",
+                    "FLAG_OWN_REALTY",
+                    "CNT_CHILDREN", 
+                    "AMT_INCOME_TOTAL",
+                    "NAME_EDUCATION_TYPE ",
+                    "NAME_FAMILY_STATUS",
+                    "NAME_HOUSING_TYPE",
+                    "DAYS_BIRTH",
+                    "DAYS_EMPLOYED", 
+                    "FLAG_MOBIL", 
+                    "FLAG_WORK_PHONE", 
+                    "FLAG_PHONE",
+                    "FLAG_EMAIL",
+                    "OCCUPATION_TYPE",
+                    "BEGIN_MONTHS", 
+                    "STATUS", 
+                    "TARGET"
+                    ],
+        
+        "Coluna": [
+                        "ID",
+                        "GENERO",
+                        "POSSUI_CARRO",
+                        "POSSUI_PROPRIEDADES",
+                        "QTD_FILHOS",
+                        "Valor total de renda",
+                        "ESCOLARIDADE", 
+                        "ESTADO_CIVIL", 
+                        "TIPO_DE_MORADIA",
+                        "DIAS_ANIVERSARIO", 
+                        "POSSUI_EMPREGO",
+                        "CELULAR",
+                        "TELEFONE_COMERCIAL", 
+                        "TELEFONE_RESIDENCIAL", 
+                        "EMAIL", 
+                        "CARGO",
+                        "QTD_MESES", 
+                        "STATUS_PAGAMENTO", 
+                        "TARGET"
+                    ],
+                    
+        "Tipo do dado":[
+                        "Float",
+                        "Int",
+                        "Int",
+                        "Int",
+                        "Int",
+                        "Int",
+                        "Float",
+                        "Int",
+                        "Int",
+                        "Float",
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int", 
+                        "Int"
+                    ],
+
+        "Descrition" :
+                     [
+                       "ID",
+                       "Gender", 
+                       "Is there a car", 
+                       "Is there a property", 
+                       "Number of children", 
+                       "Annual income",   
+                       "Education level", 
+                       "Marital status", 
+                       "Way of living", 
+                       "Age in days",
+                       "Duration of work in days",
+                       "Is there a mobile phone",
+                       "Is there a work phone", 
+                       "Is there a phone",
+                       "Is there an email",
+                       "Job",
+                       "Record month",
+                       "Status",
+                       "Target: Risk user are marked as '1', else are '0'"
+                       ],
+
+        "Descrição" : 
+                        [
+                        "Identificador", 
+                        "Gênero", 
+                        "Possui veículo", 
+                        "Possui propriedade",
+                        "Quantidade de filhos", 
+                        "Renda anual",
+                        "Escolaridade", 
+                        "Estado civil",
+                        "Modo de vida",
+                        "Idade em dias",
+                        "Duração do trabalho em dias",
+                        "Possui telefone móvel", 
+                        "Possui telefone comercial",
+                        "Possui telefone fixo",
+                        "Tem um e-mail", 
+                        "Profissão", 
+                        "Mês de registro ",
+                        "Status",
+                        "Target: Usuários de risco são marcados como '1', caso contrário são '0'"
+                       ]
+                    }
+    
+    df_dicionario = pd.DataFrame(dicionario_dados,columns=["Column", "Coluna", "Tipo do dado", "Descrition", "Descrição",])  
+    st.dataframe(df_dicionario,use_container_width=True)
