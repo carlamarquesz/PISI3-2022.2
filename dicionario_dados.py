@@ -5,8 +5,8 @@ col_nova = new_columns
 
 def lista_dados_colunas(dados_col):
      column = [None] * len(dados_col) 
-     for i,j in enumerate(dados_col):
-          column[i] = j
+     for index, value in enumerate(dados_col):
+          column[index] = value
      return column
 
 col_original = lista_dados_colunas(col_antiga)
