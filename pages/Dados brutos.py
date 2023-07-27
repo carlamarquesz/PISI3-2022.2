@@ -47,5 +47,5 @@ with aba2:
 # Dicionário de dados
 with aba3:
     st.subheader("Dicionário de dados")
-    df_dicionario = pd.DataFrame(dicionario_dados,columns=["Column", "Coluna", "Tipo do dado", "Descrition", "Descrição",])  
+    df_dicionario = pd.DataFrame(dicionario_dados,columns=["Column", "Coluna", "Tipo de dado", "Descrition", "Descrição",])  
     st.dataframe(df_dicionario,use_container_width=True)
