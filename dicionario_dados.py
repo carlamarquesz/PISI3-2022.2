@@ -1,43 +1,11 @@
 from utils import *
 
-col_antiga = colunas_db
-col_nova = new_columns
-
-def lista_dados_colunas(dados_col):
-     column = [None] * len(dados_col) 
-     for index, value in enumerate(dados_col):
-          column[index] = value
-     return column
-
-col_original = lista_dados_colunas(col_antiga)
-col_renomeada = lista_dados_colunas(col_nova)
-
 dicionario_dados = {
-        "Column": col_original,
+        "Column": col_em_ing,
         
-        "Coluna": col_renomeada,
+        "Coluna": col_em_pt,
                     
-        "Tipo do dado":[
-                        "Float",
-                        "Int",
-                        "Int",
-                        "Int",
-                        "Int",
-                        "Int",
-                        "Float",
-                        "Int",
-                        "Int",
-                        "Float",
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int", 
-                        "Int"
-                    ],
+        "Tipo de dado": tipo_dados,
 
         "Descrition" :
                      [
@@ -82,8 +50,7 @@ dicionario_dados = {
                         "Profissão", 
                         "Mês de registro ",
                         "Status",
-                        "Target: Usuários de risco",
-     
+                        "Target: Usuários de risco são marcados como '1', os demais são '0'."
                        ]
                     }
 
