@@ -9,7 +9,7 @@ df = pd.read_csv("./data/credit_card_approval.csv")
 new_columns = [
     "ID",
     "GENERO",
-    "POSSUI_CARRO",
+    "POSSUI_CARRO", 
     "POSSUI_PROPRIEDADES",
     "QTD_FILHOS",
     "RENDIMENTO_ANUAL",
@@ -27,6 +27,7 @@ new_columns = [
     "STATUS_PAGAMENTO",
     "TARGET",
 ]
+
 df.columns = new_columns
 df["GENERO"].replace({"F": 0, "M": 1}, inplace=True)
 df["POSSUI_CARRO"].replace({"Y": 1, "N": 0}, inplace=True)
@@ -107,17 +108,55 @@ def texto(filtro_qtd_meses):
         return f'nos últimos {filtro_qtd_meses} meses'
 
 # print(df.sort_values("ID"))
-# #Target desbalanceado que veio do dataset
-# ax = sns.countplot(x='TARGET', data=df) 
-# ax.set_title('Target desbalanceado')
-# #plt.show()
+#Target desbalanceado que veio do dataset
+ax = sns.countplot(x='TARGET', data=df) 
+ax.set_title('Target desbalanceado')
+#plt.show()
 
-# #Target balanceado com SMOTE
-# X = df.drop('TARGET', axis = 1)
-# y = df['TARGET']
-# smt = SMOTE(random_state=123)  # Instancia um objeto da classe SMOTE
-# X, y = smt.fit_resample(X, y)  # Realiza a reamostragem do conjunto de dados
-# df = pd.concat([X, y], axis=1)    
-# ax2 = sns.countplot(x='TARGET', data=df)
-# ax2.set_title('Target balanceado com SMOTE')
-# #plt.show()
+#Target balanceado com SMOTE
+X = df.drop('TARGET', axis = 1)
+y = df['TARGET']
+smt = SMOTE(random_state=123)  # Instancia um objeto da classe SMOTE
+X, y = smt.fit_resample(X, y)  # Realiza a reamostragem do conjunto de dados
+df = pd.concat([X, y], axis=1)    
+ax2 = sns.countplot(x='TARGET', data=df)
+ax2.set_title('Target balanceado com SMOTE')
+#plt.show()
+print(df['TARGET'].value_counts())
+print(df.head(2))
+df = df.drop(columns=['ID', 'GENERO', 'DIAS_ANIVERSARIO', 'CELULAR', 'TELEFONE_COMERCIAL', 'TELEFONE_RESIDENCIAL', 'EMAIL', 'QTD_MESES'])
+print(df.head(2))
+Xmaria = [[1,1,2,42000,1,4,2,1,8,1]]
+#Divisão em inputs e outputs
+X = df.drop('TARGET', axis = 1)
+y = df['TARGET']
+
+from sklearn.preprocessing import StandardScaler
+norm = StandardScaler() 
+X_normalizado = norm.fit_transform(X)  #Normalização dos dados
+
+from sklearn.model_selection import train_test_split  
+X_treino, X_teste, y_treino, y_teste = train_test_split(X_normalizado, y, test_size=0.3, random_state=123)   #Divisão em treino e teste
+
+from sklearn.tree import DecisionTreeClassifier
+dtc = DecisionTreeClassifier(criterion='entropy', random_state=42)
+dtc.fit(X_treino, y_treino)
+dtc.feature_importances_
+predito_ArvoreDecisao = dtc.predict(X_teste)
+print(predito_ArvoreDecisao) #Predição do modelo Árvore de Decisão
+
+
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_teste, predito_ArvoreDecisao)) #Matriz de confusão
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_teste, predito_ArvoreDecisao)) #Acurácia
+
+from sklearn.metrics import precision_score
+print(precision_score(y_teste, predito_ArvoreDecisao)) #Precisão
+
+from sklearn.metrics import recall_score
+print(recall_score(y_teste, predito_ArvoreDecisao)) #Recall, serve para saber a taxa de acerto dos positivos
+
+print('Modelo Árvore de Decisão: ', precision_score(y_teste, predito_ArvoreDecisao)) #Precisão
+
