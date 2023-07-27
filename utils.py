@@ -5,7 +5,11 @@ import seaborn as sns
 from imblearn.over_sampling import SMOTE
 
 # Reorganizando os dados credit_card_approval para ML
-df = pd.read_csv("./data/credit_card_approval.csv")
+# df = pd.read_csv("./data/credit_card_approval.csv")
+df = pd.read_parquet("./data/credit_card_approval.parquet")
+
+colunas_db = df.columns
+
 new_columns = [
     "ID",
     "GENERO",
