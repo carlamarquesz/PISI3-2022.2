@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 import seaborn as sns
-from imblearn.over_sampling import SMOTE
+# from imblearn.over_sampling import SMOTE
 
 # Reorganizando os dados credit_card_approval para ML
 # df = pd.read_csv("./data/credit_card_approval.csv")
 df = pd.read_parquet("./data/credit_card_approval.parquet")
 
-colunas_db = df.columns
+col_em_ing  = colunas_db = list(df.columns)
 
 new_columns = [
     "ID",
@@ -109,6 +109,9 @@ def texto(filtro_qtd_meses):
         return f'no último mês'
     else:
         return f'nos últimos {filtro_qtd_meses} meses'
+
+col_em_pt = list(df.columns)
+tipo_dados = list(df.dtypes)
 
 # print(df.sort_values("ID"))
 # #Target desbalanceado que veio do dataset
