@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-# dados = pd.read_csv("./data/credit_card_approval.csv")
-dados = pd.read_parquet("./data/credit_card_approval.parquet")
+dados = pd.read_csv("./data/credit_card_approval.csv")
+# dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
 new_columns = [
@@ -34,4 +34,4 @@ dados["STATUS2"].replace(
             inplace=True,
         )
 dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
-print(dados.head()) 
+
