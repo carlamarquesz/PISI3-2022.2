@@ -7,6 +7,11 @@ from graphics import *
 st.set_page_config(layout="wide")
 
 
+def read_data():
+    data = pd.read_csv("./data/credit_card_approval.csv")
+    return data
+
+
 # Fazer o dowload do dataset
 @st.cache_data
 def converte_csv(df):
@@ -31,9 +36,10 @@ with aba1:
         nome_arquivo = st.text_input("", label_visibility="collapsed", value="dados")
         nome_arquivo += ".csv"
     with coluna2:
+        df_download = read_data()
         st.download_button(
             "Fazer o download da tabela em csv",
-            data=converte_csv(df),
+            data=converte_csv(df_download),
             file_name=nome_arquivo,
             mime="text/csv",
         )
@@ -47,5 +53,14 @@ with aba2:
 # Dicionário de dados
 with aba3:
     st.subheader("Dicionário de dados")
-    df_dicionario = pd.DataFrame(dicionario_dados,columns=["Column", "Coluna", "Tipo de dado", "Descrition", "Descrição",])  
-    st.dataframe(df_dicionario,use_container_width=True)
+    df_dicionario = pd.DataFrame(
+        dicionario_dados,
+        columns=[
+            "Column",
+            "Coluna",
+            "Tipo de dado",
+            "Descrition",
+            "Descrição",
+        ],
+    )
+    st.dataframe(df_dicionario, use_container_width=True)
