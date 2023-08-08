@@ -6,7 +6,13 @@ from graphics import *
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
-aba1, aba2 = st.tabs(["Estatística geral", "Histórico de atrasos"])
+aba1, aba2, aba3 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers"])
+
+def identify_outliers(df, column):
+    z_scores = (df[column] - df[column].mean()) / df[column].std()
+    threshold = 2.5
+    outliers = df[abs(z_scores) > threshold]
+    return outliers
 
 # Estatisca geral
 with aba1:
@@ -96,6 +102,7 @@ with aba1:
         st.plotly_chart(fig4, use_container_width=True) 
         with st.expander("Descrição"):
             st.write("O gráfico analisa a relação entre o nível de escolaridade dos indivíduos e seu histórico de pagamento. É possível identificar quais níveis de escolaridade estão associados a um maior risco de inadimplência, auxiliando na tomada de decisões relacionadas à concessão de crédito") 
+
 # Histórico de atrasos
 with aba2:
     st.subheader("Histórico de atrasos")
@@ -128,3 +135,19 @@ with aba2:
     with coluna4:
         st.metric("Estão com 30 à 59 dias \n\nde atraso", lista[5])
         st.metric("Estão com 1 a 29 dias \n\nde atraso", lista[6])
+
+# Outliers
+with aba3:
+    st.subheader("Gráficos de Outliers")
+    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'DIAS_ANIVERSARIO']
+    selected_column = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
+    outliers = identify_outliers(dados, selected_column)
+
+    fig_scatter = px.scatter(dados, x=dados.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
+    fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color='red', size=10, symbol='circle'))
+    fig_box = px.box(dados, y=selected_column, title='Box Plot')
+    fig_histogram = px.histogram(dados, x=selected_column, nbins=20, title='Histograma', labels={'x': selected_column, 'y': 'Contagem'})
+
+    st.plotly_chart(fig_scatter)
+    st.plotly_chart(fig_box)
+    st.plotly_chart(fig_histogram)
