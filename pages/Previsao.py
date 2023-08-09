@@ -58,7 +58,7 @@ def main():
         solicitante = np.array(lista)
         
         # Exibir o resultado da análise
-        resultado = executar_classificador(classificador_arvore_decisao, X_train, [solicitante], y_train)
+        resultado = executar_classificador(classificador_random_forest, X_train, [solicitante], y_train)
         print(resultado)
         if resultado == 0: 
             st.success(f"Cliente {nome}: Sua solicitação de crédito foi APROVADA!") 

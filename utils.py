@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 from imblearn.over_sampling import SMOTE
+
+
 df = pd.read_parquet("./data/credit_card_approval.parquet")
 df = df.sort_values(by="ID")
 col_em_ing  = list(df.columns)
