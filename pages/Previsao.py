@@ -79,7 +79,7 @@ def main():
             'Métrica': ['Accuracy Score', 'Precision Score', 'Recall Score'],
             'Valor': [acuracia, precisao, recall]
         }
-        with st.expander("Resultados da Validação da Árvore de Decisão"):
+        with st.expander("Resultados da Validação Random Forest"):
             st.subheader("Métricas:")
             st.table(pd.DataFrame(metricas))
 
