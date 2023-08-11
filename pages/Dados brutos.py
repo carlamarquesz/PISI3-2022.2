@@ -22,6 +22,7 @@ st.subheader("Database")
 aba1, aba2, aba3 = st.tabs(
     ["Qualitativos e Numéricos", "Dados para ML", "Dicionário de dados"]
 )
+
 # Dados qualitativos e quantitativos
 with aba1:
     st.markdown("Dados de pessoas que solicitaram análise de crédito")
@@ -43,6 +44,7 @@ with aba1:
             file_name=nome_arquivo,
             mime="text/csv",
         )
+
 # Dados tratados para ML
 with aba2:
     st.markdown("Dados de pessoas que solicitaram análise de crédito")
@@ -50,6 +52,7 @@ with aba2:
     st.markdown(
         f"A tabela possui :blue[{df.shape[0]}] linhas e :blue[{df.shape[1]}] colunas"
     )
+
 # Dicionário de dados
 with aba3:
     st.subheader("Dicionário de dados")

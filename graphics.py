@@ -16,7 +16,7 @@ new_columns = [
     "ESCOLARIDADE",
     "ESTADO_CIVIL",
     "TIPO_DE_MORADIA",
-    "DIAS_ANIVERSARIO",
+    "IDADE_ANOS",
     "POSSUI_EMPREGO",
     "CELULAR",
     "TELEFONE_COMERCIAL",
@@ -34,4 +34,5 @@ dados["STATUS2"].replace(
             inplace=True,
         )
 dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
+dados['IDADE_ANOS'] = (dados['IDADE_ANOS'] / -365.25).round(0).astype(int)
 

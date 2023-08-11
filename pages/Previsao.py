@@ -4,6 +4,7 @@ import numpy as np
 from utils import *
 from modelo import *
 
+
 def read_data():
     data = pd.read_parquet("./data/credit_card_approval.parquet")
     return data
@@ -15,12 +16,13 @@ def prepare_options(data):
     opcoes_profissao = data["JOB"].unique()
     opcoes_profissao = np.append(opcoes_profissao, "-")
     opcoes_filhos = data["CNT_CHILDREN"].unique()
-    return opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos
+    opcoes_status = data["STATUS"].unique()
+    return opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, opcoes_status
 
 def main():
     st.title("Simular análise de crédito") 
     data = read_data()
-    opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos = prepare_options(data) 
+    opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, opcoes_status = prepare_options(data) 
     nome = st.text_input("Nome:") 
     escolaridade = st.selectbox("Escolaridade:", opcoes_escolaridade, key="escolaridade")
     estado_civil = st.selectbox("Estado Civil:", opcoes_estado_civil, key="estado_civil")
@@ -28,9 +30,12 @@ def main():
     carro = st.selectbox("Possui Carro?", ["Não", "Sim"], key="carro")
     propriedades = st.selectbox("Possui Propriedades?", ["Não", "Sim"], key="propriedades")
     moradia = st.selectbox("Tipo de Moradia:", opcoes_moradia, key="moradia")
-    emprego = st.selectbox("Emprego Atual:", ["Não", "Sim"], key="emprego")
+    emprego = st.selectbox("Trabalha atualmente?", ["Não", "Sim"], key="emprego")
     profissao = st.selectbox("Profissão:", opcoes_profissao, key="profissao")
     renda_anual = st.number_input("Renda anual:", min_value=0, max_value=10000000) 
+    qtd_meses = st.number_input("Quantidade de meses:", min_value=0, max_value=100)
+    idade = st.number_input("Idade:", min_value=0, max_value=110)
+    status = st.selectbox("Status:", opcoes_status, key="status")
     enviar = st.button("Enviar")  
     dict = {}
     for i in dados.columns:
@@ -46,7 +51,12 @@ def main():
         dict["POSSUI_EMPREGO"] = 1 if emprego == "Sim" else 0 
         if profissao != "-":
             dict[profissao] = 1 
-        dict['RENDIMENTO_ANUAL'] = renda_anual  
+        dict['RENDIMENTO_ANUAL'] = renda_anual
+        dict['IDADE_ANOS'] = idade
+        dict['QTD_MESES'] = qtd_meses
+        dict[status] = 1
+
+
         lista = list(dict.values())[:-1] 
 
         # Exibir os dados recebidos
@@ -58,7 +68,7 @@ def main():
         solicitante = np.array(lista)
         
         # Exibir o resultado da análise
-        resultado = executar_classificador(classificador_random_forest, X_train, [solicitante], y_train)
+        resultado = executar_classificador(classificador_random_forest, x_train, [solicitante], y_train)
         print(resultado)
         if resultado == 0: 
             st.success(f"Cliente {nome}: Sua solicitação de crédito foi APROVADA!") 

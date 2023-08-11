@@ -8,12 +8,6 @@ st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
 aba1, aba2, aba3 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers"])
 
-def identify_outliers(df, column):
-    z_scores = (df[column] - df[column].mean()) / df[column].std()
-    threshold = 2.5
-    outliers = df[abs(z_scores) > threshold]
-    return outliers
-
 # Estatisca geral
 with aba1:
     st.subheader("Estatística geral")
@@ -109,9 +103,11 @@ with aba2:
     opcoes_qtd_meses = np.sort(dados["QTD_MESES"].unique().astype(int))
     filtro_qtd_meses = st.selectbox("Selecione o valor de meses:", opcoes_qtd_meses)
     st.subheader(f"Atrasos de pagamento {texto(filtro_qtd_meses)}")
+    
     # Condições de filtro para STATUS_PAGAMENTO
     status_pagamento = ["X", "C", "5", "4", "3", "2", "1", "0"]
     lista = []
+
     # Filtrar dados de acordo com o valor de meses
     for i in status_pagamento:
         dados_filtrados = len(
@@ -121,6 +117,7 @@ with aba2:
             ]
         )
         lista.append(dados_filtrados)
+
     # Exibir dados filtrados
     coluna1, coluna2, coluna3, coluna4 = st.columns(4)
     with coluna1:
@@ -139,15 +136,12 @@ with aba2:
 # Outliers
 with aba3:
     st.subheader("Gráficos de Outliers")
-    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'DIAS_ANIVERSARIO']
+    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'IDADE_ANOS']
     selected_column = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
     outliers = identify_outliers(dados, selected_column)
 
-    fig_scatter = px.scatter(dados, x=dados.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
-    fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color='red', size=10, symbol='circle'))
     fig_box = px.box(dados, y=selected_column, title='Box Plot')
     fig_histogram = px.histogram(dados, x=selected_column, nbins=20, title='Histograma', labels={'x': selected_column, 'y': 'Contagem'})
 
-    st.plotly_chart(fig_scatter)
     st.plotly_chart(fig_box)
     st.plotly_chart(fig_histogram)

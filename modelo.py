@@ -2,18 +2,18 @@ from utils import *
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
 from sklearn.ensemble import RandomForestClassifier
-import matplotlib.pyplot as plt
 
-def executar_validador(X, y):
+
+def executar_validador(x, y):
     validador = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=123)
-    for treino_id, teste_id in validador.split(X, y):
-        X_train, X_test = X[treino_id], X[teste_id]
+    for treino_id, teste_id in validador.split(x, y):
+        x_train, x_test = x[treino_id], x[teste_id]
         y_train, y_test = y[treino_id], y[teste_id]
-    return X_train, X_test, y_train, y_test
+    return x_train, x_test, y_train, y_test
 
-def executar_classificador(classificador, X_train, X_test, y_train):
-    modelo = classificador.fit(X_train, y_train)
-    y_pred = modelo.predict(X_test)
+def executar_classificador(classificador, x_train, x_test, y_train):
+    modelo = classificador.fit(x_train, y_train)
+    y_pred = modelo.predict(x_test)
     return y_pred
 
 def validar_modelo(y_test, y_pred):
@@ -24,16 +24,16 @@ def validar_modelo(y_test, y_pred):
     return acuracia, precisao, recall, matrix_confusao
 
 # Execução do validador
-X = dados.drop("TARGET", axis=1).values
+x = dados.drop("TARGET", axis=1).values
 y = dados["TARGET"].values
-X_train, X_test, y_train, y_test = executar_validador(X, y)
+x_train, x_test, y_train, y_test = executar_validador(x, y)
 
 # Execução do classificador RandomForestClassifier
 classificador_random_forest = RandomForestClassifier(
     n_estimators=100, max_depth=10, random_state=123
 )
 y_pred_random_forest = executar_classificador(
-    classificador_random_forest, X_train, X_test, y_train
+    classificador_random_forest, x_train, x_test, y_train
 )
 
 # Validação do modelo Random Forest
