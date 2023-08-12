@@ -78,8 +78,7 @@ ax2.set_title('Target balanceado com SMOTE')
 print(df['TARGET'].value_counts())
 dados = df.drop(
     columns=[
-        "ID",
-        "GENERO",
+        "ID", 
         "DIAS_ANIVERSARIO",
         "CELULAR",
         "TELEFONE_COMERCIAL",
