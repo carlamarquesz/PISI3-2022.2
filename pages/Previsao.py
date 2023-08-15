@@ -28,7 +28,7 @@ def main():
     carro = st.selectbox("Possui Carro?", ["Não", "Sim"], key="carro")
     propriedades = st.selectbox("Possui Propriedades?", ["Não", "Sim"], key="propriedades")
     moradia = st.selectbox("Tipo de Moradia:", opcoes_moradia, key="moradia")
-    emprego = st.selectbox("Emprego Atual:", ["Não", "Sim"], key="emprego")
+    emprego = st.selectbox("Possui emprego?", ["Não", "Sim"], key="emprego")
     profissao = st.selectbox("Profissão:", opcoes_profissao, key="profissao")
     renda_anual = st.number_input("Renda anual:", min_value=0, max_value=10000000) 
     enviar = st.button("Enviar")  
@@ -58,7 +58,7 @@ def main():
         solicitante = np.array(lista)
         
         # Exibir o resultado da análise
-        resultado = executar_classificador(classificador_arvore_decisao, X_train, [solicitante], y_train)
+        resultado = executar_classificador(classificador_svm, X_train, [solicitante], y_train)
         print(resultado)
         if resultado == 0: 
             st.success(f"Cliente {nome}: Sua solicitação de crédito foi APROVADA!") 
@@ -67,14 +67,14 @@ def main():
 
         metricas = {
             'Métrica': ['Accuracy Score', 'Precision Score', 'Recall Score'],
-            'Valor': [acuracia, precisao, recall]
+            'Valor': [acuracia_svm, precisao_svm, recall_svm]
         }
-        with st.expander("Resultados da Validação da Árvore de Decisão"):
+        with st.expander("Resultados da Validação SVM"):
             st.subheader("Métricas:")
             st.table(pd.DataFrame(metricas))
 
             st.subheader("Matriz de Confusão:")
-            st.table(matrix_confusao) 
+            st.table(matrix_confusao_svm) 
         
 
 if __name__ == "__main__":
