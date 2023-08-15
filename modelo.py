@@ -1,10 +1,8 @@
-from utils import *  
+from utils import *
 from sklearn.model_selection import StratifiedShuffleSplit 
-from sklearn.metrics import accuracy_score,confusion_matrix,precision_score,recall_score
-from sklearn import tree 
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score
+from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt 
-
-
 
 def executar_validador(X, y):
     validador = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=123)
@@ -13,42 +11,35 @@ def executar_validador(X, y):
         y_train, y_test = y[treino_id], y[teste_id]
     return X_train, X_test, y_train, y_test
 
-
-def salvar_arvore(classificador, nome):
-    plt.figure(figsize=(200, 100))
-    tree.plot_tree(classificador, filled=True, fontsize=14)
-    plt.savefig(nome)
-    plt.close()
-
-
 def executar_classificador(classificador, X_train, X_test, y_train):
-    arvore = classificador.fit(X_train, y_train)
-    y_pred = arvore.predict(X_test)
+    modelo = classificador.fit(X_train, y_train)
+    y_pred = modelo.predict(X_test)
     return y_pred
 
-def validar_arvore(y_test, y_pred):
+def validar_modelo(y_test, y_pred):
     acuracia = accuracy_score(y_test, y_pred)
     precisao = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     matrix_confusao = confusion_matrix(y_test, y_pred)
     return acuracia, precisao, recall, matrix_confusao 
 
-# execucao do validador
+# execução do validador
 X = dados.drop("TARGET", axis=1).values
 y = dados["TARGET"].values
 X_train, X_test, y_train, y_test = executar_validador(X, y)
 
-# execucao do classificador DecisionTreeClassifier
-classificador_arvore_decisao = tree.DecisionTreeClassifier(
-    max_depth=10, random_state=123
+# execução do classificador Naïve Bayes
+classificador_naive_bayes = GaussianNB()
+y_pred_naive_bayes = executar_classificador(
+    classificador_naive_bayes, X_train, X_test, y_train
 )
-y_pred_arvore_decisao = executar_classificador(
-    classificador_arvore_decisao, X_train, X_test, y_train
-) 
 
-# validacao arvore de decisao
-acuracia,precisao,recall,matrix_confusao = validar_arvore(y_test, y_pred_arvore_decisao)
-print(dados.columns)  
+# validação Naïve Bayes
+acuracia_naive_bayes, precisao_naive_bayes, recall_naive_bayes, matrix_confusao_naive_bayes = validar_modelo(y_test, y_pred_naive_bayes)
 
-# criacao da figura da arvore de decisao
-#salvar_arvore(classificador_arvore_decisao, "arvore_decisao.png")
+# Resultados do Naïve Bayes
+print("Resultados do Naïve Bayes:")
+print("Acurácia: ", acuracia_naive_bayes)
+print("Precisão: ", precisao_naive_bayes)
+print("Recall: ", recall_naive_bayes)
+print("Matriz de Confusão do Naïve Bayes: \n", matrix_confusao_naive_bayes)
