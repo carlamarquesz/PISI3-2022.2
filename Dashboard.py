@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from utils import *
 from graphics import *
+# from data_visualization.data_for_analysis_streamlit import *
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
@@ -147,7 +148,10 @@ with aba3:
     fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color='red', size=10, symbol='circle'))
     fig_box = px.box(dados, y=selected_column, title='Box Plot')
     fig_histogram = px.histogram(dados, x=selected_column, nbins=20, title='Histograma', labels={'x': selected_column, 'y': 'Contagem'})
+    fig_box2 = px.box(dados, y='CARGO', x='RENDIMENTO_ANUAL', color='CARGO', title='Boxplot de Rendimento Anual por Cargo')
 
     st.plotly_chart(fig_scatter)
     st.plotly_chart(fig_box)
+    if selected_column == 'RENDIMENTO_ANUAL':
+        st.plotly_chart(fig_box2)
     st.plotly_chart(fig_histogram)
