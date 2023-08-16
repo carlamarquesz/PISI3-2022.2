@@ -53,13 +53,16 @@ with aba1:
         # Calcular o salário mensal com base no rendimento anual
         st.caption("Média de salário das profissões")
         dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
-        media_salario = dados.groupby('CARGO')[['SALARIO']].mean().sort_values('SALARIO') 
+        profissoes = dados['CARGO'].unique()
+        profissoes_selecionadas = st.multiselect("Selecione as profissões: ", profissoes)
+        dados_filtrados = dados[dados['CARGO'].isin(profissoes_selecionadas)]
+        media_salario = dados_filtrados.groupby('CARGO')[['SALARIO']].mean() 
         df_salario = pd.DataFrame({
             "Profissão": media_salario.index,
             "Média de salário ($)": media_salario['SALARIO'].values.round(0)
         })
-        fig2 = px.bar(df_salario, x="Média de salário ($)", y="Profissão")
-        fig2.update_layout(xaxis_title="Média de salário ($)", yaxis_title="Profissão")
+        fig2 = px.bar(df_salario, x="Profissão", y="Média de salário ($)")
+        fig2.update_layout(xaxis_title="Profissão", yaxis_title="Média de salário ($)")
         st.plotly_chart(fig2, use_container_width=True) 
         with st.expander("Descrição"):
             st.write("O gráfico mostra a relação entre as profissões e o salário mensal com base no rendimento anual, permitindo identificar padrões que indicam risco ou capacidade de pagamento. Isso otimiza a análise de crédito e melhora a tomada de decisões.") 
