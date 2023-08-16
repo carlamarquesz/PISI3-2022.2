@@ -29,6 +29,7 @@ new_columns = [
 ]
 
 df.columns = new_columns
+
 df["GENERO"].replace({"F": 0, "M": 1}, inplace=True)
 df["POSSUI_CARRO"].replace({"Y": 1, "N": 0}, inplace=True)
 df["POSSUI_PROPRIEDADES"].replace({"Y": 1, "N": 0}, inplace=True)
