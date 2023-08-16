@@ -15,6 +15,14 @@ def identify_outliers(df, column):
     outliers = df[abs(z_scores) > threshold]
     return outliers
 
+def rendimento_cargos(df):
+    cargos_unicos = df['CARGO'].unique()
+    st.title('Análise de Rendimentos Anuais por Gênero e Cargo')
+    cargo_selecionado = st.selectbox('Selecione o tipo de cargo:', cargos_unicos)
+    df_cargo = df[df['CARGO'] == cargo_selecionado]
+    grafico = px.box(df_cargo, y='RENDIMENTO_ANUAL', color='GENERO', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por Gênero')
+    st.plotly_chart(grafico)
+
 # Estatisca geral
 with aba1:
     st.subheader("Estatística geral")
@@ -148,10 +156,9 @@ with aba3:
     fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color='red', size=10, symbol='circle'))
     fig_box = px.box(dados, y=selected_column, title='Box Plot')
     fig_histogram = px.histogram(dados, x=selected_column, nbins=20, title='Histograma', labels={'x': selected_column, 'y': 'Contagem'})
-    fig_box2 = px.box(dados, y='CARGO', x='RENDIMENTO_ANUAL', color='CARGO', title='Boxplot de Rendimento Anual por Cargo')
 
     st.plotly_chart(fig_scatter)
     st.plotly_chart(fig_box)
     if selected_column == 'RENDIMENTO_ANUAL':
-        st.plotly_chart(fig_box2)
+        rendimento_cargos(dados)
     st.plotly_chart(fig_histogram)
