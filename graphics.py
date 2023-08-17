@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 50)
+dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 100)
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -112,10 +112,10 @@ dados["CARGO"].replace(
 )
 
 
-dados["STATUS_PAGAMENTO"].replace(
-    {"C": 'pago no prazo', "X": 'Não aplicável', "0": '1-29 dias de atraso', "1": '30-59 dias de atraso', "2": '60-89 dias de atraso', "3": '90-119 dias de atraso', "4": '120-149 dias de atraso', "5": '150+ dias de atraso'},
-    inplace=True,
-)
+# dados["STATUS_PAGAMENTO"].replace(
+#     {"C": 'pago no prazo', "X": 'Não aplicável', "0": '1-29 dias de atraso', "1": '30-59 dias de atraso', "2": '60-89 dias de atraso', "3": '90-119 dias de atraso', "4": '120-149 dias de atraso', "5": '150+ dias de atraso'},
+#     inplace=True,
+# )
 
 
 
@@ -133,3 +133,4 @@ dados["STATUS_PAGAMENTO"].replace(
 #        'STATUS_PAGAMENTO', 'TARGET']
 
 # print(verificar_valores_unicos(col, dados))
+
