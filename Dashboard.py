@@ -17,7 +17,7 @@ def identify_outliers(df, column):
 
 def rendimento_cargos(df):
     cargos_unicos = df['CARGO'].unique()
-    st.title('Análise de Rendimentos Anuais por Gênero e Cargo')
+    st.subheader('Análise de Rendimentos Anuais por Gênero e Cargo')
     cargo_selecionado = st.selectbox('Selecione o tipo de cargo:', cargos_unicos)
     df_cargo = df[df['CARGO'] == cargo_selecionado]
     grafico = px.box(df_cargo, y='RENDIMENTO_ANUAL', color='GENERO', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por Gênero')
