@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from utils import *
 from graphics import *
 # from data_visualization.data_for_analysis_streamlit import *
@@ -61,13 +62,28 @@ with aba1:
         # Calcular o salário mensal com base no rendimento anual
         st.caption("Média de salário das profissões")
         dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
-        media_salario = dados.groupby('CARGO')[['SALARIO']].mean().sort_values('SALARIO') 
+        profissoes = dados['CARGO'].unique()
+        profissoes_selecionadas = st.multiselect("Selecione as profissões: ", profissoes)
+        idade = st.text_input("Digite a idade desejada: ")
+        QUANTIDADE_DIAS_ANO = 365.25
+        try:
+            idade_anos = float(idade)
+        except ValueError:
+            idade_anos = None
+
+        if idade_anos is not None:
+            idade_dias = int(idade_anos * QUANTIDADE_DIAS_ANO) * -1
+            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas)) & (dados['DIAS_ANIVERSARIO'] == idade_dias)]
+            print(idade_dias)
+        else:
+            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas))]
+        media_salario = dados_filtrados.groupby('CARGO')[['SALARIO']].mean() 
         df_salario = pd.DataFrame({
             "Profissão": media_salario.index,
             "Média de salário ($)": media_salario['SALARIO'].values.round(0)
         })
-        fig2 = px.bar(df_salario, x="Média de salário ($)", y="Profissão")
-        fig2.update_layout(xaxis_title="Média de salário ($)", yaxis_title="Profissão")
+        fig2 = px.bar(df_salario, x="Profissão", y="Média de salário ($)")
+        fig2.update_layout(xaxis_title="Profissão", yaxis_title="Média de salário ($)", bargap=0.2, bargroupgap=0.1)
         st.plotly_chart(fig2, use_container_width=True) 
         with st.expander("Descrição"):
             st.write("O gráfico mostra a relação entre as profissões e o salário mensal com base no rendimento anual, permitindo identificar padrões que indicam risco ou capacidade de pagamento. Isso otimiza a análise de crédito e melhora a tomada de decisões.") 
@@ -105,6 +121,7 @@ with aba1:
         fig4 = px.bar(
             df_escolaridade, x="Risco de inadimplência (%)", y="Nível de educação"
         )
+
         fig4.update_layout(
             xaxis_title="Risco de inadimplência (%)", yaxis_title="Nível de educação"
         )
