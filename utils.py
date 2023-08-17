@@ -4,6 +4,7 @@ import seaborn as sns
 from imblearn.over_sampling import SMOTE
 df = pd.read_parquet("./data/credit_card_approval.parquet")
 df = df.sort_values(by="ID")
+
 col_em_ing  = list(df.columns)
 
 new_columns = [
@@ -44,6 +45,7 @@ df["STATUS_PAGAMENTO"].replace(
 )
 col_em_pt = list(df.columns)
 tipo_dados = list(df.dtypes) 
+
 #Técnica One-Hot
 tipos_de_profissao = pd.get_dummies(df["CARGO"])
 tipos_estado_civil = pd.get_dummies(df["ESTADO_CIVIL"])
@@ -76,7 +78,7 @@ df = pd.concat([X, y], axis=1)
 ax2 = sns.countplot(x='TARGET', data=df)
 ax2.set_title('Target balanceado com SMOTE')
 #plt.show()
-print(df['TARGET'].value_counts())
+# print(df['TARGET'].value_counts())
 dados = df.drop(
     columns=[
         "ID",
