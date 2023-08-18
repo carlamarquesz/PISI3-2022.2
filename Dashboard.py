@@ -165,7 +165,7 @@ with aba2:
 # Outliers
 with aba3:
     st.subheader("Gráficos de Outliers")
-    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'DIAS_ANIVERSARIO']
+    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'IDADE_ANOS']
     selected_column = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
     outliers = identify_outliers(dados, selected_column)
 
