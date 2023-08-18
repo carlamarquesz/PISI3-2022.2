@@ -10,19 +10,6 @@ st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
 aba1, aba2, aba3 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers"])
 
-def identify_outliers(df, column):
-    z_scores = (df[column] - df[column].mean()) / df[column].std()
-    threshold = 2.5
-    outliers = df[abs(z_scores) > threshold]
-    return outliers
-
-def rendimento_cargos(df):
-    cargos_unicos = df['CARGO'].unique()
-    st.subheader('Análise de Rendimentos Anuais por Gênero e Cargo')
-    cargo_selecionado = st.selectbox('Selecione o tipo de cargo:', cargos_unicos)
-    df_cargo = df[df['CARGO'] == cargo_selecionado]
-    grafico = px.box(df_cargo, y='RENDIMENTO_ANUAL', color='GENERO', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por Gênero')
-    st.plotly_chart(grafico)
 
 # Estatisca geral
 with aba1:
