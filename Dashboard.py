@@ -2,13 +2,14 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 from utils import *
 from graphics import *
 # from data_visualization.data_for_analysis_streamlit import *
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
-aba1, aba2, aba3 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers"])
+aba1, aba2, aba3, aba4 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers", "Gráficos"])
 
 
 # Estatisca geral
@@ -166,3 +167,30 @@ with aba3:
     if selected_column == 'RENDIMENTO_ANUAL':
         rendimento_cargos(dados)
     st.plotly_chart(fig_histogram)
+
+with aba4:
+    st.subheader("Gráficos")
+    fig5 = px.histogram(dados, x = 'IDADE_ANOS')
+    st.plotly_chart(fig5)
+    
+    grafico = px.scatter_matrix(dados, dimensions=['IDADE_ANOS', 'RENDIMENTO_ANUAL'], color = 'TARGET')
+    st.plotly_chart(grafico)
+    
+    grafico2 = px.parallel_categories(dados, dimensions=['CARGO', 'ESTADO_CIVIL'])
+    st.plotly_chart(grafico2)
+    
+    # Filtros interativos
+    idade_filter = st.multiselect("Selecione a faixa de idade:", dados['IDADE_ANOS'])
+    escolaridade_filter = st.multiselect("Selecione a escolaridade:", dados["ESCOLARIDADE"].unique())
+    estado_civil_filter = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique())
+   
+    # Aplicando os filtros ao DataFrame
+    filtered_dados = dados[
+    (dados["IDADE_ANOS"].isin(idade_filter)) &
+    (dados["ESCOLARIDADE"].isin(escolaridade_filter)) &
+    (dados["ESTADO_CIVIL"].isin(estado_civil_filter))
+    ]
+    
+    fig6 = px.histogram(filtered_dados, x="GENERO", title="Distribuição de Gênero")
+    st.plotly_chart(fig6, use_container_width=True)
+    
