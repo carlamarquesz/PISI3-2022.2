@@ -51,4 +51,4 @@ acuracia,precisao,recall,matrix_confusao = validar_arvore(y_test, y_pred_arvore_
 print(dados.columns)  
 
 # criacao da figura da arvore de decisao
-#salvar_arvore(classificador_arvore_decisao, "arvore_decisao.png")
+salvar_arvore(classificador_arvore_decisao, "arvore_decisao.png")

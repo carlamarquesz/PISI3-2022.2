@@ -40,8 +40,29 @@ df["POSSUI_PROPRIEDADES"].replace({"Y": 1, "N": 0}, inplace=True)
 df["IDADE_ANOS"] = (df["IDADE_ANOS"] / -365.25).round(0).astype(int)
 df["POSSUI_EMPREGO"] = np.where(df["POSSUI_EMPREGO"] < 0, 1, 0)
 df["QTD_MESES"] = np.ceil(pd.to_timedelta(df["QTD_MESES"], unit="D").dt.days * (-1))
+df["STATUS_PAGAMENTO"].replace(
+    {"C": 0, "X": 0,'0':1, '1':2, '2':3, '3':3, '4':3, '5':3},
+    inplace=True,
+)
 col_em_pt = list(df.columns)
-tipo_dados = list(df.dtypes) 
+tipo_dados = list(df.dtypes)
+
+# Moda dos status
+grouped = df.groupby('ID')['STATUS_PAGAMENTO'].apply(lambda x: x.mode())
+grouped_df = grouped.reset_index()
+
+clientes_moda_3 = grouped_df[grouped_df['STATUS_PAGAMENTO'] == 3]['ID'].tolist()
+clientes_moda_2 = grouped_df[grouped_df['STATUS_PAGAMENTO'] == 2]['ID'].tolist()
+clientes_moda_1 = grouped_df[grouped_df['STATUS_PAGAMENTO'] == 1]['ID'].tolist()
+clientes_moda_0 = grouped_df[grouped_df['STATUS_PAGAMENTO'] == 0]['ID'].tolist()
+df = df.drop_duplicates(subset='ID', keep='first')
+
+df.loc[df['ID'].isin(clientes_moda_0), 'STATUS_PAGAMENTO'] = 0
+df.loc[df['ID'].isin(clientes_moda_1), 'STATUS_PAGAMENTO'] = 1
+df.loc[df['ID'].isin(clientes_moda_2), 'STATUS_PAGAMENTO'] = 2
+df.loc[df['ID'].isin(clientes_moda_3), 'STATUS_PAGAMENTO'] = 3
+
+df.loc[df['STATUS_PAGAMENTO'] == 3, 'TARGET'] = 1
 
 #Técnica One-Hot
 tipos_de_profissao = pd.get_dummies(df["CARGO"])
@@ -53,7 +74,7 @@ tipos_status = pd.get_dummies(df["STATUS_PAGAMENTO"])
 df = pd.concat([df, tipos_de_profissao, tipos_estado_civil, tipos_de_moradia, tipos_escolaridade, qtda_filhos, tipos_status], axis= 1)
  
 
-del df["CARGO"], df['ESCOLARIDADE'], df['ESTADO_CIVIL'], df['QTD_FILHOS'], df['TIPO_DE_MORADIA'], df['STATUS_PAGAMENTO']
+del df["CARGO"], df['ESCOLARIDADE'], df['ESTADO_CIVIL'], df['QTD_FILHOS'], df['TIPO_DE_MORADIA'], df["QTD_MESES"]
 
 
 #Target desbalanceado que veio do dataset
@@ -65,6 +86,7 @@ ax.set_title('Target desbalanceado')
 x = df.drop('TARGET', axis = 1)
 y = df['TARGET']
 smt = SMOTE(random_state=123)
+x.columns = x.columns.astype(str)
 x, y = smt.fit_resample(x, y)  # Realiza a reamostragem do conjunto de dados
 df = pd.concat([x, y], axis=1)    
 ax2 = sns.countplot(x='TARGET', data=df)
