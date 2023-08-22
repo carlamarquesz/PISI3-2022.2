@@ -199,7 +199,7 @@ with aba3:
             if tipo_grafico == "box":
                 grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
             elif tipo_grafico == "violin":
-                grafico = px.violin(df_cargo,x="CARGO", y='Rendimento Anual', color=opc,points='all', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}', )
+                grafico = px.violin(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}', )
             st.plotly_chart(grafico)
 
         plot_outlirs_box_violion()
