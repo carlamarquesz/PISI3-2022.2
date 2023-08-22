@@ -48,7 +48,6 @@ with aba1:
 
         # Calcular o salário mensal com base no rendimento anual
         st.caption("Média de salário das profissões")
-        # dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
         profissoes = dados['CARGO'].unique()
         profissoes_selecionadas = st.multiselect("Selecione as profissões: ", profissoes)
         idade = st.text_input("Digite a idade desejada: ")
@@ -60,7 +59,7 @@ with aba1:
 
         if idade_anos is not None:
             # idade_dias = int(idade_anos * QUANTIDADE_DIAS_ANO) * -1
-            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas)) & (dados['IDADE_ANOS'] == idade_anos)]
+            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas)) & (dados['Idade'] == idade_anos)]
             # print(idade_dias)
         else:
             dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas))]
@@ -69,11 +68,11 @@ with aba1:
             "Profissão": media_salario.index,
             "Média de salário ($)": media_salario['SALARIO'].values.round(0)
         })
-        # fig2 = px.bar(df_salario, x="Profissão", y="Média de salário ($)")
-        # fig2.update_layout(xaxis_title="Profissão", yaxis_title="Média de salário ($)", bargap=0.2, bargroupgap=0.1)
-        # st.plotly_chart(fig2, use_container_width=True) 
-        # with st.expander("Descrição"):
-        #     st.write("O gráfico mostra a relação entre as profissões e o salário mensal com base no rendimento anual, permitindo identificar padrões que indicam risco ou capacidade de pagamento. Isso otimiza a análise de crédito e melhora a tomada de decisões.") 
+        fig2 = px.bar(df_salario, x="Profissão", y="Média de salário ($)")
+        fig2.update_layout(xaxis_title="Profissão", yaxis_title="Média de salário ($)", bargap=0.2, bargroupgap=0.1)
+        st.plotly_chart(fig2, use_container_width=True) 
+        with st.expander("Descrição"):
+            st.write("O gráfico mostra a relação entre as profissões e o salário mensal com base no rendimento anual, permitindo identificar padrões que indicam risco ou capacidade de pagamento. Isso otimiza a análise de crédito e melhora a tomada de decisões.") 
             
 
     with coluna2:
@@ -98,7 +97,7 @@ with aba1:
 
         # Distribuição do nível de escolaridade com maior risco de inadimplência
         st.caption("Nível de escolaridade com maior risco de inadimplência")
-        media_escolaridade_com_atraso = (dados['STATUS2'] == 1).groupby(dados['ESCOLARIDADE']).mean() 
+        media_escolaridade_com_atraso = (dados['STATUS2'] == 1).groupby(dados['Escolaridade']).mean() 
         df_escolaridade = pd.DataFrame(
             {
                 "Nível de educação": media_escolaridade_com_atraso.index,
@@ -119,7 +118,7 @@ with aba1:
 # Histórico de atrasos
 with aba2:
     st.subheader("Histórico de atrasos")
-    opcoes_qtd_meses = np.sort(dados["QTD_MESES"].unique().astype(int))
+    opcoes_qtd_meses = np.sort(dados["Quantidade de Meses"].unique().astype(int))
     filtro_qtd_meses = st.selectbox("Selecione o valor de meses:", opcoes_qtd_meses)
     st.subheader(f"Atrasos de pagamento {texto(filtro_qtd_meses)}")
     # Condições de filtro para STATUS_PAGAMENTO
@@ -129,7 +128,7 @@ with aba2:
     for i in status_pagamento:
         dados_filtrados = len(
             dados.loc[
-                (dados["QTD_MESES"] == filtro_qtd_meses)
+                (dados["Quantidade de Meses"] == filtro_qtd_meses)
                 & (dados["STATUS_PAGAMENTO"] == i)
             ]
         )
@@ -152,7 +151,7 @@ with aba2:
 # Outliers
 with aba3:
     st.subheader("Gráficos de Outliers") 
-    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'IDADE_ANOS']
+    columns_options = ['Rendimento Anual', 'Quantidade de Meses', 'Idade']
     selected_column = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
 
     def graficos_outliers(selected_column):
@@ -184,27 +183,26 @@ with aba3:
                 qtd_dados_box_violion = st.slider("Selecione a quantidade de  dados que serão exibidas:", min_value=1, max_value=len(dados), value=50, key='2')
                 tipo_grafico = st.radio(
         "Escolha o Gráfico:",
-        ("box","violin") )  
+        ("box", "violin")) 
 
             with c1:
                 opc = st.radio(
         "Filtrar por:",
         ('GENERO', 'Faixa Etária', 'Escolaridade'))   
 
-            with c1:
-                cargos_unicos = df_copy_box_violion['CARGO'].unique()
-                cargo_selecionado = st.selectbox('Selecione o tipo de cargo:', cargos_unicos)
-                df_cargo = df_copy_box_violion[df_copy_box_violion['CARGO'] == cargo_selecionado]
-                df_cargo = df_copy_box_violion.head(qtd_dados_box_violion) 
-                if tipo_grafico == "box":
-                    grafico = px.box(df_cargo,x=df_cargo.index, y='RENDIMENTO_ANUAL', points='all', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
         
-                else:
-                    grafico = px.violin(df_cargo,x=df_cargo.index, y='RENDIMENTO_ANUAL', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
-                st.plotly_chart(grafico)
+                cargos_unicos = df_copy_box_violion['CARGO'].unique()
+                cargo_selecionado = st.selectbox('Selecione o tipo de cargo:',cargos_unicos)
+                df_cargo = df_copy_box_violion[df_copy_box_violion['CARGO'] == cargo_selecionado]
+                df_cargo = df_cargo.head(qtd_dados_box_violion) 
+            grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
+            if tipo_grafico == "box":
+                grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
+            elif tipo_grafico == "violin":
+                grafico = px.violin(df_cargo,x="CARGO", y='Rendimento Anual', color=opc,points='all', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}', )
+            st.plotly_chart(grafico)
 
         plot_outlirs_box_violion()
-
 
         def plot_outlirs_histogram(selected_column):
             c1, c2 = st.columns(2)
