@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from utils import *
-from data_visualization.dicionario_dados import *
+from data_dict.dicionario_dados import *
 from graphics import *
 
 st.set_page_config(layout="wide")

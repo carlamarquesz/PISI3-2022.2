@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 100)
+dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 50)
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -79,7 +79,7 @@ dados["TIPO_DE_MORADIA"].replace(
 )
 
 ## Nova coluna a ser criada
-#dados['RENDIMENTO_MENSAL'] = (dados['RENDIMENTO_ANUAL']) / 12
+dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
 
 def formatando(data,col, col_nova):
   data[col_nova] = (dados[col] // 365) * - 1
@@ -111,6 +111,11 @@ dados["CARGO"].replace(
     },
     inplace=True,
 )
+
+# Criando a coluna de faixas etárias
+bins = [0, 18, 30, 50, float('inf')]  
+labels = ['0-18', '19-30', '31-50', '51+']
+dados['Faixa Etária'] = pd.cut(dados['IDADE_ANOS'], bins=bins, labels=labels)
 
 
 # dados["STATUS_PAGAMENTO"].replace(
