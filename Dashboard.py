@@ -171,26 +171,134 @@ with aba3:
 with aba4:
     st.subheader("Gráficos")
     fig5 = px.histogram(dados, x = 'IDADE_ANOS')
-    st.plotly_chart(fig5)
+    st.plotly_chart(fig5, use_container_width=True)
     
-    grafico = px.scatter_matrix(dados, dimensions=['IDADE_ANOS', 'RENDIMENTO_ANUAL'], color = 'TARGET')
-    st.plotly_chart(grafico)
+    fig7 = px.histogram(dados, x = 'SALARIO')
+    st.plotly_chart(fig7, use_container_width=True)
+    
+    grafico = px.scatter_matrix(dados, dimensions=['IDADE_ANOS', 'SALARIO','ESTADO_CIVIL'], color = 'TARGET')
+    st.plotly_chart(grafico, use_container_width=True)
+    with st.expander('Descrição'):
+        st.write("grafico que mostra a relação da idade, salario mensal, estado civil com a aprovação de cartão")
     
     grafico2 = px.parallel_categories(dados, dimensions=['CARGO', 'ESTADO_CIVIL'])
-    st.plotly_chart(grafico2)
+    st.plotly_chart(grafico2, use_container_width=True)
     
+    st.subheader("Gráfico de Barras Interativo com Filtros")
     # Filtros interativos
-    idade_filter = st.multiselect("Selecione a faixa de idade:", dados['IDADE_ANOS'])
+    idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64))
     escolaridade_filter = st.multiselect("Selecione a escolaridade:", dados["ESCOLARIDADE"].unique())
     estado_civil_filter = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique())
    
     # Aplicando os filtros ao DataFrame
     filtered_dados = dados[
-    (dados["IDADE_ANOS"].isin(idade_filter)) &
+    (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1]) &
     (dados["ESCOLARIDADE"].isin(escolaridade_filter)) &
     (dados["ESTADO_CIVIL"].isin(estado_civil_filter))
     ]
     
     fig6 = px.histogram(filtered_dados, x="GENERO", title="Distribuição de Gênero")
     st.plotly_chart(fig6, use_container_width=True)
+    
+    st.subheader("Gráfico de Dispersão Interativo")
+    # Filtros interativos
+    genero_filter = st.multiselect("Selecione o gênero:", dados["GENERO"].unique())
+    estado_civil_filter2 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter")
+
+    # Aplicando os filtros ao DataFrame
+    filtered_dados2 = dados[
+        (dados["GENERO"].isin(genero_filter)) &
+        (dados["ESTADO_CIVIL"].isin(estado_civil_filter2))
+    ]
+
+    # Criando o gráfico de dispersão interativo
+    fig = px.scatter(
+        filtered_dados2, 
+        x="IDADE_ANOS", 
+        y="RENDIMENTO_ANUAL", 
+        color="GENERO", 
+        symbol="ESTADO_CIVIL", 
+        title="Relação entre Rendimento Anual e Idade"
+    )
+
+    # Atualizando a aparência do gráfico
+    fig.update_traces(marker=dict(size=12, opacity=0.8))
+
+    st.plotly_chart(fig, use_container_width=True)
+    with st.expander("Descrição"):
+        st.write("Relação entre Rendimento anual e idade com base no seu genero e estado civil")
+    
+    st.subheader("Gráfico de Pizza Interativo")
+    # Filtros interativos
+    genero_filter2 = st.multiselect("Selecione o gênero:", dados["GENERO"].unique(), key="genero_filter")
+    estado_civil_filter3 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter2")
+    idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64), key = "idade_filter")
+
+    # Aplicando os filtros ao DataFrame
+    filtered_dados3 = dados[
+        (dados["GENERO"].isin(genero_filter)) &
+        (dados["ESTADO_CIVIL"].isin(estado_civil_filter)) &
+        (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1])
+    ]
+
+    # Calculando as proporções
+    carro_counts = filtered_dados3["POSSUI_CARRO"].value_counts()
+    propriedade_counts = filtered_dados3["POSSUI_PROPRIEDADES"].value_counts()
+
+    # Criando o gráfico de pizza interativo
+    fig_carro = px.pie(
+        names=carro_counts.index, 
+        values=carro_counts.values, 
+        title="Proporção de Pessoas que Possuem Carro"
+    )
+
+    fig_propriedade = px.pie(
+        names=propriedade_counts.index, 
+        values=propriedade_counts.values, 
+        title="Proporção de Pessoas que Possuem Propriedade"
+    )
+
+    # Atualizando a aparência dos gráficos
+    fig_carro.update_traces(textinfo="percent+label", 
+                            pull=[0.1, 0], 
+                            marker=dict(line=dict(color="#000000", width=2)),
+                            textfont_size=20,
+                            textfont_color="white",
+                            textposition="inside")
+    fig_propriedade.update_traces(textinfo="percent+label", 
+                                  pull=[0.1, 0], 
+                                  marker=dict(line=dict(color="#000000", width=2)),
+                                  textfont_size=20,
+                                  textfont_color="white",
+                                  textposition="inside")
+
+    # Exibindo os gráficos
+    st.plotly_chart(fig_carro, use_container_width=True)
+    st.plotly_chart(fig_propriedade, use_container_width=True)
+    
+    # Filtros interativos
+    st.subheader("Gráfico de Barras Empilhadas Interativo")
+    moradia_filter = st.multiselect("Selecione o tipo de moradia:", dados["TIPO_DE_MORADIA"].unique(), key="moradia_filter")
+    escolaridade_filter = st.multiselect("Selecione o nível de escolaridade:", dados["ESCOLARIDADE"].unique(), key="escolaridade_filter")
+
+    # Aplicando os filtros ao DataFrame
+    filtered_dados4 = dados[
+        (dados["TIPO_DE_MORADIA"].isin(moradia_filter)) &
+        (dados["ESCOLARIDADE"].isin(escolaridade_filter))
+    ]
+
+    # Criando o gráfico de barras empilhadas interativo
+    fig8 = px.bar(
+        filtered_dados4, 
+        x="ESTADO_CIVIL", 
+        color="GENERO", 
+        title="Distribuição de Gênero em Diferentes Estados Civis",
+        labels={"Estado Civil": "Estado Civil"}
+    )
+
+    # Atualizando a aparência do gráfico
+    fig8.update_layout(barmode="stack")
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig8, use_container_width=True)
     
