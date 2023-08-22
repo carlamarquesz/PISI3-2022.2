@@ -61,15 +61,15 @@ ax = sns.countplot(x='TARGET', data=df)
 ax.set_title('Target desbalanceado')
 #plt.show()
 
-#Target balanceado com SMOTE
-x = df.drop('TARGET', axis = 1)
-y = df['TARGET']
-smt = SMOTE(random_state=123)
-x, y = smt.fit_resample(x, y)  # Realiza a reamostragem do conjunto de dados
-df = pd.concat([x, y], axis=1)    
-ax2 = sns.countplot(x='TARGET', data=df)
-ax2.set_title('Target balanceado com SMOTE')
-#plt.show()
+# #Target balanceado com SMOTE
+# x = df.drop('TARGET', axis = 1)
+# y = df['TARGET']
+# smt = SMOTE(random_state=123)
+# x, y = smt.fit_resample(x, y)  # Realiza a reamostragem do conjunto de dados
+# df = pd.concat([x, y], axis=1)    
+# ax2 = sns.countplot(x='TARGET', data=df)
+# ax2.set_title('Target balanceado com SMOTE')
+# #plt.show()
 # print(df['TARGET'].value_counts())
 dados = df.drop(
     columns=[
