@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv")
+dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 100)
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -12,18 +12,18 @@ new_columns = [
     "POSSUI_CARRO",
     "POSSUI_PROPRIEDADES",
     "QTD_FILHOS",
-    "Rendimento Anual",
-    "Escolaridade",
+    "RENDIMENTO_ANUAL",
+    "ESCOLARIDADE",
     "ESTADO_CIVIL",
     "TIPO_DE_MORADIA",
-    "Idade",
+    "IDADE_ANOS",
     "POSSUI_EMPREGO",
     "CELULAR",
     "TELEFONE_COMERCIAL",
     "TELEFONE_RESIDENCIAL",
     "EMAIL",
     "CARGO",
-    "Quantidade de Meses",
+    "QTD_MESES",
     "STATUS_PAGAMENTO",
     "TARGET",
 ]
@@ -33,8 +33,8 @@ dados["STATUS2"].replace(
             {"C": 0, "X": 0, "0": 1, "1": 1, "2": 1, "3": 1, "4": 1, "5": 1},
             inplace=True,
         )
-dados["Quantidade de Meses"] = np.ceil(pd.to_timedelta(dados["Quantidade de Meses"], unit="D").dt.days * (-1))
-dados["Idade"] = (dados["Idade"] / -365.25).round(0).astype(int)
+dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
+dados["IDADE_ANOS"] = (dados["IDADE_ANOS"] / -365.25).round(0).astype(int)
 
 
 # dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
@@ -44,7 +44,7 @@ dados["QTD_FILHOS"].replace(
     {"No children": 'Sem filhos', "1 children": '1 filho', "2+ children": '2+ filhos'}, inplace=True
 )
 
-dados["Escolaridade"].replace(
+dados["ESCOLARIDADE"].replace(
     {
         "Higher education": "Ensino Superior",
         "Secondary / secondary special": "Secundário / secundário especial",
@@ -79,7 +79,7 @@ dados["TIPO_DE_MORADIA"].replace(
 )
 
 ## Nova coluna a ser criada
-dados['SALARIO'] = dados['Rendimento Anual'] / 12
+#dados['RENDIMENTO_MENSAL'] = (dados['RENDIMENTO_ANUAL']) / 12
 
 def formatando(data,col, col_nova):
   data[col_nova] = (dados[col] // 365) * - 1
@@ -112,11 +112,6 @@ dados["CARGO"].replace(
     inplace=True,
 )
 
-# Criando a coluna de faixas etárias
-bins = [18, 30, 50, float('inf')]  
-labels = ['19-30', '31-50', '51+']
-dados['Faixa Etária'] = pd.cut(dados['Idade'], bins=bins, labels=labels)
-
 
 # dados["STATUS_PAGAMENTO"].replace(
 #     {"C": 'pago no prazo', "X": 'Não aplicável', "0": '1-29 dias de atraso', "1": '30-59 dias de atraso', "2": '60-89 dias de atraso', "3": '90-119 dias de atraso', "4": '120-149 dias de atraso', "5": '150+ dias de atraso'},
@@ -124,8 +119,6 @@ dados['Faixa Etária'] = pd.cut(dados['Idade'], bins=bins, labels=labels)
 # )
 
 
-unique_labels = dados['Faixa Etária'].unique()
-print(unique_labels)
 
 # # VERIFICANDO VALORES CONTIDOS NAS COLUNAS ESCOLHIDAS
 # def verificar_valores_unicos(col, dataset):
