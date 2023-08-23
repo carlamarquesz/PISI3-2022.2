@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows= 100)
+dados = pd.read_csv("./data/credit_card_approval.csv")
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -33,8 +33,9 @@ dados["STATUS2"].replace(
             {"C": 0, "X": 0, "0": 1, "1": 1, "2": 1, "3": 1, "4": 1, "5": 1},
             inplace=True,
         )
-dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
+# dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
 dados["IDADE_ANOS"] = (dados["IDADE_ANOS"] / -365.25).round(0).astype(int)
+
 
 
 # dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
@@ -80,12 +81,6 @@ dados["TIPO_DE_MORADIA"].replace(
 
 ## Nova coluna a ser criada
 #dados['RENDIMENTO_MENSAL'] = (dados['RENDIMENTO_ANUAL']) / 12
-
-def formatando(data,col, col_nova):
-  data[col_nova] = (dados[col] // 365) * - 1
-
-# formatando(dados,"ANOS_EMPREGADO", 'ANOS_EMPREGADO')
-# formatando(dados,'IDADE','IDADE')
 
 
 dados["CARGO"].replace(
@@ -134,4 +129,20 @@ dados["CARGO"].replace(
 #        'STATUS_PAGAMENTO', 'TARGET']
 
 # print(verificar_valores_unicos(col, dados))
+import streamlit as st
+def criar_radio_com_chave_unica(texto, opcoes, chave):
+    return st.radio(texto, opcoes, key=chave)
+
+# # Criando a coluna de faixas etárias
+bins = [18, 30, 50, float('inf')]  
+labels = ['19-30', '31-50', '51+']
+dados['Faixa Etária'] = pd.cut(dados['IDADE_ANOS'], bins=bins, labels=labels)
+
+
+dados["QTD_MESES"] = (dados["QTD_MESES"] * (-1))
+
+## Nova coluna a ser criada
+dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
+
+
 
