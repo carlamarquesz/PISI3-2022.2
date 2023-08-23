@@ -11,7 +11,6 @@ st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
 aba1, aba2, aba3, aba4 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers", "Gráficos"])
 
-
 # Estatisca geral
 with aba1:
     st.subheader("Estatística geral")
@@ -53,16 +52,16 @@ with aba1:
         profissoes = dados['CARGO'].unique()
         profissoes_selecionadas = st.multiselect("Selecione as profissões: ", profissoes)
         idade = st.text_input("Digite a idade desejada: ")
-        QUANTIDADE_DIAS_ANO = 365.25
+        # QUANTIDADE_DIAS_ANO = 365.25
         try:
             idade_anos = float(idade)
         except ValueError:
             idade_anos = None
 
         if idade_anos is not None:
-            idade_dias = int(idade_anos * QUANTIDADE_DIAS_ANO) * -1
-            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas)) & (dados['DIAS_ANIVERSARIO'] == idade_dias)]
-            print(idade_dias)
+            # idade_dias = int(idade_anos * QUANTIDADE_DIAS_ANO) * -1
+            dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas)) & (dados['IDADE_ANOS'])]
+            # print(idade_dias)
         else:
             dados_filtrados = dados[(dados['CARGO'].isin(profissoes_selecionadas))]
         media_salario = dados_filtrados.groupby('CARGO')[['SALARIO']].mean() 
@@ -152,21 +151,95 @@ with aba2:
 
 # Outliers
 with aba3:
-    st.subheader("Gráficos de Outliers")
-    columns_options = ['RENDIMENTO_ANUAL', 'QTD_MESES', 'IDADE_ANOS']
-    selected_column = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
-    outliers = identify_outliers(dados, selected_column)
+    st.subheader("Gráficos de Outliers") 
+    columns_options = ['Rendimento Anual', 'Meses de Cadastro', 'Idade']
+    selected = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
 
-    fig_scatter = px.scatter(dados, x=dados.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
-    fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color='red', size=10, symbol='circle'))
-    fig_box = px.box(dados, y=selected_column, title='Box Plot')
-    fig_histogram = px.histogram(dados, x=selected_column, nbins=20, title='Histograma', labels={'x': selected_column, 'y': 'Contagem'})
+    selected_column = None
+    if selected == 'Rendimento Anual':
+        selected_column = 'RENDIMENTO_ANUAL'
+    elif selected == 'Meses de Cadastro':
+        selected_column = 'QTD_MESES'
+    elif selected == 'Idade':
+        selected_column  = 'IDADE_ANOS'
 
-    st.plotly_chart(fig_scatter)
-    st.plotly_chart(fig_box)
-    if selected_column == 'RENDIMENTO_ANUAL':
-        rendimento_cargos(dados)
-    st.plotly_chart(fig_histogram)
+    def graficos_outliers(selected_column):
+
+        def plot_outliers_scatter(selected_column):
+            coluna2, coluna3 =  st.columns([0.7,.3])
+            df_copy_scatter = dados.copy()
+            with coluna3:
+                with st.expander('Selecione a quantidade de  dados a exibir'):
+                    qtd_dados_scatter = st.slider("", min_value=1, max_value=len(dados), value=50, key='1')
+                df_scatter = df_copy_scatter.head(qtd_dados_scatter) 
+                simbol = st.selectbox('selecione o simbolo para os outlirs',['circle', 'square', 'diamond', 'cross', 'x', 'triangle-up'])
+                st.write(" ")
+                outliers = identify_outliers(df_scatter, selected_column)
+                color = st.color_picker('Escolhar a cor dos outlirs', '#00f900')
+            with coluna2:
+                fig_scatter = px.scatter(df_scatter, x=df_scatter.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
+                fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color=color, size=10, symbol=simbol))
+                st.plotly_chart(fig_scatter)
+
+        plot_outliers_scatter(selected_column) 
+
+        def plot_outlirs_box_violion():
+            coluna1, coluna2 =  st.columns([0.7,.3])
+            df_copy_box_violion = dados.copy()   
+            df_copy_box_violion.rename(columns={'RENDIMENTO_ANUAL':'Rendimento Anual', 'GENERO':'Gênero', 'ESCOLARIDADE':'Escolaridade', 'TIPO_DE_MORADIA':'Tipo de moradia', 'QTD_FILHOS':'Quantidade de filhos'}, inplace=True)   
+            with coluna2:
+                with st.expander('Selecione a quantidade de  dados a exibir'):
+                  qtd_dados_box_violion = st.slider('',min_value=1, max_value=len(dados), value=50, key='2')
+                tipo_grafico = st.radio(
+                    "Escolha o Gráfico:",
+                    ("box", "violin"))
+                
+                with st.expander('Filtre por:'):
+                    opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['Gênero', 'Faixa Etária', 'Escolaridade', 'Tipo de moradia', 'Quantidade de filhos'] ,chave= 'opcfiltro')
+
+                # opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opcfiltro')
+
+            with coluna1:
+                # opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opcfiltro')     
+                cargos_unicos = df_copy_box_violion['CARGO'].unique()
+                cargo_selecionado = st.selectbox('Selecione o tipo de cargo:',cargos_unicos)
+                df_cargo = df_copy_box_violion[df_copy_box_violion['CARGO'] == cargo_selecionado]
+                df_cargo = df_cargo.head(qtd_dados_box_violion) 
+                grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual',color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
+                if tipo_grafico == "box":
+                    grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
+                elif tipo_grafico == "violin":
+                    grafico = px.violin(df_cargo,x="CARGO", y='Rendimento Anual', color=opc,violinmode= "group", points="outliers",box= True, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}', )
+                st.plotly_chart(grafico)
+
+        if selected_column == 'RENDIMENTO_ANUAL':
+            plot_outlirs_box_violion()
+
+        def plot_outlirs_histogram(selected_column):
+            coluna1, coluna2 =  st.columns([0.7,.3])
+            df_copy_histogram = dados.copy()
+            df_copy_histogram.rename(columns={'GENERO':'Gênero', 'ESCOLARIDADE':'Escolaridade', 'IDADE_ANOS':'Idade', 'QTD_FILHOS':'Quantidade de filhos'}, inplace=True)
+            df_copy_histogram['IDADE_ANOS'] = df_copy_histogram['Idade'].copy()  
+            with coluna2:
+                with st.expander('Selecione a quantidade de  dados a exibir'):
+                    qtd_dados_histogram = st.slider("Selecione a quantidade de  dados que serão exibidas:", min_value=1, max_value=len(dados), value=50, key= '3')
+                
+                df_histogram = df_copy_histogram.head(qtd_dados_histogram)  
+                colunas_color = ['Gênero', 'Faixa Etária', 'Escolaridade', 'Idade', 'Quantidade de filhos']        
+                colunas_selecionadas = st.multiselect("Selecione as colunas para colorir:", colunas_color)
+                df_histogram['ColorGroup'] = df_histogram[colunas_selecionadas].apply(lambda row: ' - '.join(row.values.astype(str)), axis=1)
+
+                #     opc1 = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opc1filtro')
+            with coluna1:  
+                fig_histogram = px.histogram(df_histogram, x=selected_column, color='ColorGroup', title='Histograma' )
+                fig_histogram.update_layout(
+                                                xaxis_title=f"{selected_column}",
+                                                yaxis_title="Contagem"
+                                            )
+                st.plotly_chart(fig_histogram)
+        plot_outlirs_histogram(selected_column)
+
+    graficos_outliers(selected_column)
 
 with aba4:
     st.subheader("Gráficos")
@@ -302,3 +375,4 @@ with aba4:
     # Exibindo o gráfico
     st.plotly_chart(fig8, use_container_width=True)
     
+

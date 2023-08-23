@@ -61,15 +61,15 @@ ax = sns.countplot(x='TARGET', data=df)
 ax.set_title('Target desbalanceado')
 #plt.show()
 
-#Target balanceado com SMOTE
-x = df.drop('TARGET', axis = 1)
-y = df['TARGET']
-smt = SMOTE(random_state=123)
-x, y = smt.fit_resample(x, y)  # Realiza a reamostragem do conjunto de dados
-df = pd.concat([x, y], axis=1)    
-ax2 = sns.countplot(x='TARGET', data=df)
-ax2.set_title('Target balanceado com SMOTE')
-#plt.show()
+# #Target balanceado com SMOTE
+# x = df.drop('TARGET', axis = 1)
+# y = df['TARGET']
+# smt = SMOTE(random_state=123)
+# x, y = smt.fit_resample(x, y)  # Realiza a reamostragem do conjunto de dados
+# df = pd.concat([x, y], axis=1)    
+# ax2 = sns.countplot(x='TARGET', data=df)
+# ax2.set_title('Target balanceado com SMOTE')
+# #plt.show()
 # print(df['TARGET'].value_counts())
 dados = df.drop(
     columns=[
@@ -95,11 +95,3 @@ def identify_outliers(df, column):
     threshold = 2.5
     outliers = df[abs(z_scores) > threshold]
     return outliers
-
-def rendimento_cargos(df):
-    cargos_unicos = df['CARGO'].unique()
-    st.subheader('Análise de Rendimentos Anuais por Gênero e Cargo')
-    cargo_selecionado = st.selectbox('Selecione o tipo de cargo:', cargos_unicos)
-    df_cargo = df[df['CARGO'] == cargo_selecionado]
-    grafico = px.box(df_cargo, y='RENDIMENTO_ANUAL', color='GENERO', title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por Gênero')
-    st.plotly_chart(grafico)
