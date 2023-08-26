@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv")
+dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 50000)
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -28,18 +28,31 @@ new_columns = [
     "TARGET",
 ]
 dados.columns = new_columns   
-dados['STATUS2'] = dados['STATUS_PAGAMENTO']
+dados['STATUS2'] = dados['STATUS_PAGAMENTO'].copy()
 dados["STATUS2"].replace(
             {"C": 0, "X": 0, "0": 1, "1": 1, "2": 1, "3": 1, "4": 1, "5": 1},
             inplace=True,
         )
 # dados["QTD_MESES"] = np.ceil(pd.to_timedelta(dados["QTD_MESES"], unit="D").dt.days * (-1))
 dados["IDADE_ANOS"] = (dados["IDADE_ANOS"] / -365.25).round(0).astype(int)
+dados["VARIAVEL_TARGET"] = dados["TARGET"].copy()
+dados["VARIAVEL_TARGET"].replace(
+            {0:'Cliente de baixo risco', 1:'Cliente de risco'},
+            inplace=True)
+dados["ANOS_EMPREGADO"] = dados["POSSUI_EMPREGO"].copy()
+dados["ANOS_EMPREGADO"] = (dados["ANOS_EMPREGADO"] / -365.25).round(0).astype(int)
+dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["TELEFONE_COMERCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["TELEFONE_RESIDENCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["EMAIL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True),
 
-
-
-# dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-# dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["STATUS_PAGAMENTO"].replace(
+    {"C": 'pago no prazo', "X": 'Não aplicável', "0": '1-29 dias de atraso', "1": '30-59 dias de atraso', "2": '60-89 dias de atraso', "3": '90-119 dias de atraso', "4": '120-149 dias de atraso', "5": '150+ dias de atraso'},
+    inplace=True,
+)
 
 dados["QTD_FILHOS"].replace(
     {"No children": 'Sem filhos', "1 children": '1 filho', "2+ children": '2+ filhos'}, inplace=True
@@ -79,10 +92,6 @@ dados["TIPO_DE_MORADIA"].replace(
     inplace=True,
 )
 
-## Nova coluna a ser criada
-#dados['RENDIMENTO_MENSAL'] = (dados['RENDIMENTO_ANUAL']) / 12
-
-
 dados["CARGO"].replace(
     {
         "Security staff": "Equipe de Segurança",
@@ -107,12 +116,13 @@ dados["CARGO"].replace(
     inplace=True,
 )
 
-
-# dados["STATUS_PAGAMENTO"].replace(
-#     {"C": 'pago no prazo', "X": 'Não aplicável', "0": '1-29 dias de atraso', "1": '30-59 dias de atraso', "2": '60-89 dias de atraso', "3": '90-119 dias de atraso', "4": '120-149 dias de atraso', "5": '150+ dias de atraso'},
-#     inplace=True,
-# )
-
+# # Criando a coluna de faixas etárias
+bins = [17, 30, 50, float('inf')]  
+labels = ['18-30', '31-50', '51+']
+dados['FAIXA_ETARIA'] = pd.cut(dados['IDADE_ANOS'], bins=bins, labels=labels)
+dados["QTD_MESES"] = (dados["QTD_MESES"] * (-1))
+## Nova coluna a ser criada
+dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
 
 
 # # VERIFICANDO VALORES CONTIDOS NAS COLUNAS ESCOLHIDAS
@@ -129,20 +139,11 @@ dados["CARGO"].replace(
 #        'STATUS_PAGAMENTO', 'TARGET']
 
 # print(verificar_valores_unicos(col, dados))
+
 import streamlit as st
 def criar_radio_com_chave_unica(texto, opcoes, chave):
     return st.radio(texto, opcoes, key=chave)
 
-# # Criando a coluna de faixas etárias
-bins = [18, 30, 50, float('inf')]  
-labels = ['19-30', '31-50', '51+']
-dados['Faixa Etária'] = pd.cut(dados['IDADE_ANOS'], bins=bins, labels=labels)
-
-
-dados["QTD_MESES"] = (dados["QTD_MESES"] * (-1))
-
-## Nova coluna a ser criada
-dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
 
 
 
