@@ -9,7 +9,7 @@ from PIL import Image
 
 columns = [
         "RENDIMENTO_ANUAL",
-        "ANOS_EMPREGADO"
+        "ANOS_EMPREGADO",
         "QTD_MESES",
         "SALARIO",
     
