@@ -9,7 +9,7 @@ from PIL import Image
 
 columns = [
         "RENDIMENTO_ANUAL",
-        "ANOS_EMPREGADO"
+        "ANOS_EMPREGADO",
         "QTD_MESES",
         "SALARIO",
     
@@ -57,6 +57,15 @@ def create_interactive_visualization(dados, coluna):
 
         fig = px.box(dados, y=coluna, title='Box Plot', points='all')
         st.plotly_chart(fig,use_container_width=True)
+        
+        # descrição
+        description2 = {
+            "RENDIMENTO_ANUAL": f'Conseguimos perceber que temos muitos outliers presentes, sendo necessário o tratamento dele',
+            "ANOS_EMPREGADO": f'Conseguimos perceber que está bem distribuido os valores, percebemos tambem a existência de outliers',
+            "QTD_MESES": f'Os dados estão bem distribuidos sem a presença de outliers',
+            "SALARIO": f'Conseguimos perceber que temos muitos outliers presentes, sendo necessário o tratamento dele'
+        }
+        
         with st.expander('Descrição do Box Plot'):
             image = Image.open('image/exemplo_boxplot.png')
             st.image(image, caption='Fonte: https://statplace.com.br/blog/como-interpretar-um-boxplot/')
@@ -78,7 +87,8 @@ def create_interactive_visualization(dados, coluna):
         fig_scatter = px.scatter(dados, x=dados.index, y=coluna, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': coluna})
         fig_scatter.add_scatter(x=outliers.index, y=outliers[coluna], mode='markers', name='Outliers', marker=dict(color=color, size=10, symbol=simbol))
         st.plotly_chart(fig_scatter)
-
+        with st.expander('Descrição do gráfico'):
+            st.write(description2[coluna])
     with coluna2:
         st.subheader(f'Quantidade de dados selecionado: {len(dados)}')
         st.write(f'Quantidade de pessoas no Primeiro Quartil (Q1): {len(q1_data)}')

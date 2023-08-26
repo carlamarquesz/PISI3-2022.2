@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 3000)
+dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 50000)
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
