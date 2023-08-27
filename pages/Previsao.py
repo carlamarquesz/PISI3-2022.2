@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from utils import *
-from randomforest import *
+from AdaBoostClassifier import *
 
 def read_data():
     data = pd.read_parquet("./data/credit_card_approval.parquet")
@@ -16,14 +16,16 @@ def prepare_options(data):
     opcoes_profissao = np.append(opcoes_profissao, "-")
     opcoes_filhos = data["CNT_CHILDREN"].unique()
     genero = data["CODE_GENDER"].unique()
-    return opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, genero
+    idade = dados["IDADE_ANOS"].unique()
+    return opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, genero,idade
 
 def main():
     st.title("Simular análise de crédito") 
     data = read_data()
-    opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, genero = prepare_options(data) 
+    opcoes_escolaridade, opcoes_estado_civil, opcoes_moradia, opcoes_profissao, opcoes_filhos, genero,idade = prepare_options(data) 
     nome = st.text_input("Nome:") 
     genero = st.selectbox("Gênero:", genero, key="genero")
+    idade = st.selectbox("Idade:", sorted(idade), key="idade")
     escolaridade = st.selectbox("Escolaridade:", opcoes_escolaridade, key="escolaridade")
     estado_civil = st.selectbox("Estado Civil:", opcoes_estado_civil, key="estado_civil")
     filhos = st.selectbox("Quantidade de Filhos:", opcoes_filhos, key="filhos")
@@ -40,6 +42,7 @@ def main():
 
     if enviar:   
         dict["GENERO"] = 1 if genero == "F" else 0
+        dict["IDADE_ANOS"] = int(idade)
         dict[escolaridade] = 1
         dict[estado_civil] = 1
         dict[filhos] = 1 
@@ -61,7 +64,7 @@ def main():
         solicitante = np.array(lista)
         
         # Exibir o resultado da análise
-        resultado = executar_classificador(classificador_random_forest, X_train, [solicitante], y_train)
+        resultado = executar_classificador(classificador_adaboost, X_train, [solicitante], y_train)
         print(resultado)
         if resultado == 0: 
             st.success(f"Cliente {nome}: Sua solicitação de crédito foi APROVADA!") 
@@ -82,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

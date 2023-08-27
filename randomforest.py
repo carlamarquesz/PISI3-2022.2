@@ -40,7 +40,7 @@ y = dados["TARGET"].values
 X_train, X_test, y_train, y_test = executar_validador(X, y)
 
 # execucao do classificador DecisionTreeClassifier
-classificador_random_forest = RandomForestClassifier(n_estimators=50, random_state=0, max_depth=10)
+classificador_random_forest = RandomForestClassifier(n_estimators=100, random_state=0, max_depth=10)
 y_pred_random_forest = executar_classificador(classificador_random_forest, X_train, X_test, y_train)
 
 # validacao arvore de decisao
@@ -48,4 +48,5 @@ acuracia,precisao,recall,matrix_confusao = validar_arvore(y_test, y_pred_random_
 print(dados.columns)  
 
 # criacao da figura da arvore de decisao
-#salvar_arvore(classificador_arvore_decisao, "arvore_decisao.png")
+salvar_arvore(classificador_random_forest.estimators_[0], "random_forest1")
+salvar_arvore(classificador_random_forest.estimators_[1], "random_forest2")
