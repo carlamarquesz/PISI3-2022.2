@@ -375,4 +375,108 @@ with aba3:
     # Exibindo o gráfico
     st.plotly_chart(fig8, use_container_width=True)
     
+    st.subheader('Gráfico de Barras - Relação entre Target e Estado Civil')
+    fig9 = px.bar(
+        dados,
+        x="ESTADO_CIVIL",
+        color="TARGET",
+        title="Relação entre Target e Estado Civil",
+        labels={"ESTADO_CIVIL": "Estado Civil", "TARGET": "Alvo"}
+    )
 
+    # Exibindo o gráfico
+    st.plotly_chart(fig9, use_container_width=True)
+    
+    
+    st.subheader("Gráfico de Dispersão - Rendimento Anual vs. Idade (Colorido por Target)")
+    # Filtro interativo para selecionar a cor (TARGET)
+    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter")
+
+    # Criando o gráfico de dispersão interativo
+    fig10 = px.scatter(
+        dados,
+        x="IDADE_ANOS",
+        y="RENDIMENTO_ANUAL",
+        color=color_filter,
+        title="Rendimento Anual vs. Idade (Colorido por Target)",
+        labels={"IDADE_ANOS": "Idade (anos)", "RENDIMENTO_ANUAL": "Rendimento Anual"}
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig10, use_container_width=True)
+    
+    
+    st.subheader("Gráfico de Dispersão - Rendimento Anual X Cargo")
+    # Filtro interativo para selecionar a cor (TARGET)
+    color_filter2 = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter2")
+
+    # Criando o gráfico de dispersão interativo
+    fig14 = px.scatter(
+        dados,
+        x="CARGO",
+        y="RENDIMENTO_ANUAL",
+        color=color_filter2,
+        title="Rendimento Anual x Cargo",
+        labels={"CARGO": "cargo", "RENDIMENTO_ANUAL": "Rendimento Anual"}
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig14, use_container_width=True)
+    
+    
+    st.subheader("Gráfico de Dispersão - Distribuição de Escolaridade por Target")
+
+    # Filtro interativo para selecionar a cor (TARGET)
+    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter1")
+
+    # Criando o gráfico de dispersão interativo
+    fig11 = px.bar(
+        dados,
+        x="ESCOLARIDADE",
+        color=color_filter,
+        title="Distribuição de Escolaridade por Target",
+        labels={"TARGET": "Target", "ESCOLARIDADE": "Escolaridade"},
+        orientation='v'
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig11, use_container_width=True)
+    
+    st.subheader("Gráfico de barras - Distribuição de gênero por Target")
+    fig12 = px.bar(
+        dados,
+        x="GENERO",
+        color="TARGET",
+        title="Proporção de Gênero por Target",
+        labels={"TARGET": "Target", "GENERO": "Gênero"},
+        orientation='v'
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig12, use_container_width=True)
+    
+    st.subheader("Gráfico de barras - Distribuição de cargo por Target")
+    fig13 = px.bar(
+    dados,
+    x="CARGO",
+    color="TARGET",
+    title="Proporção de Cargo por Target",
+    labels={"TARGET": "Target", "CARGO": "Cargo"},
+    orientation='v'
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig13, use_container_width=True)
+    
+    st.subheader("Gráfico de barras - Distribuição de possui propriedades por Target")
+    fig13 = px.bar(
+    dados,
+    x="POSSUI_PROPRIEDADES",
+    color="TARGET",
+    title="Proporção de possui proriedade por Target",
+    labels={"TARGET": "Target", "POSSUI_PROPRIEDADES": "Possui propriedade"},
+    orientation='v'
+    )
+
+    # Exibindo o gráfico
+    st.plotly_chart(fig13, use_container_width=True)
