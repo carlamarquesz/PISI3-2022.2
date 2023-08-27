@@ -243,31 +243,38 @@ with aba2:
 
 with aba3:
     st.subheader("Gráficos")
-    fig5 = px.histogram(dados, x = 'IDADE_ANOS')
+
+    select_value = st.slider(label='Selecione a quantidade de dados para analisar do dataset', min_value=1,
+                          max_value=len(df_eda), value=50)
+
+    st.subheader(f"Quantidade de dados para análise do dataset: {select_value}")
+    df_eda = df_eda.head(select_value)
+
+    fig5 = px.histogram(df_eda, x = 'IDADE_ANOS')
     st.plotly_chart(fig5, use_container_width=True)
     
-    fig7 = px.histogram(dados, x = 'SALARIO')
+    fig7 = px.histogram(df_eda, x = 'SALARIO')
     st.plotly_chart(fig7, use_container_width=True)
     
-    grafico = px.scatter_matrix(dados, dimensions=['IDADE_ANOS', 'SALARIO','ESTADO_CIVIL'], color = 'TARGET')
+    grafico = px.scatter_matrix(df_eda, dimensions=['IDADE_ANOS', 'SALARIO','ESTADO_CIVIL'], color = 'TARGET')
     st.plotly_chart(grafico, use_container_width=True)
     with st.expander('Descrição'):
         st.write("grafico que mostra a relação da idade, salario mensal, estado civil com a aprovação de cartão")
     
-    grafico2 = px.parallel_categories(dados, dimensions=['CARGO', 'ESTADO_CIVIL'])
+    grafico2 = px.parallel_categories(df_eda, dimensions=['CARGO', 'ESTADO_CIVIL'])
     st.plotly_chart(grafico2, use_container_width=True)
     
     st.subheader("Gráfico de Barras Interativo com Filtros")
     # Filtros interativos
     idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64))
-    escolaridade_filter = st.multiselect("Selecione a escolaridade:", dados["ESCOLARIDADE"].unique())
-    estado_civil_filter = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique())
+    escolaridade_filter = st.multiselect("Selecione a escolaridade:", df_eda["ESCOLARIDADE"].unique())
+    estado_civil_filter = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique())
    
     # Aplicando os filtros ao DataFrame
-    filtered_dados = dados[
-    (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1]) &
-    (dados["ESCOLARIDADE"].isin(escolaridade_filter)) &
-    (dados["ESTADO_CIVIL"].isin(estado_civil_filter))
+    filtered_dados = df_eda[
+    (df_eda["IDADE_ANOS"] >= idade_filter[0]) & (df_eda["IDADE_ANOS"] <= idade_filter[1]) &
+    (df_eda["ESCOLARIDADE"].isin(escolaridade_filter)) &
+    (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter))
     ]
     
     fig6 = px.histogram(filtered_dados, x="GENERO", title="Distribuição de Gênero")
@@ -275,13 +282,13 @@ with aba3:
     
     st.subheader("Gráfico de Dispersão Interativo")
     # Filtros interativos
-    genero_filter = st.multiselect("Selecione o gênero:", dados["GENERO"].unique())
-    estado_civil_filter2 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter")
+    genero_filter = st.multiselect("Selecione o gênero:", df_eda["GENERO"].unique())
+    estado_civil_filter2 = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique(), key="estado_civil_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados2 = dados[
-        (dados["GENERO"].isin(genero_filter)) &
-        (dados["ESTADO_CIVIL"].isin(estado_civil_filter2))
+    filtered_dados2 = df_eda[
+        (df_eda["GENERO"].isin(genero_filter)) &
+        (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter2))
     ]
 
     # Criando o gráfico de dispersão interativo
@@ -303,15 +310,15 @@ with aba3:
     
     st.subheader("Gráfico de Pizza Interativo")
     # Filtros interativos
-    genero_filter2 = st.multiselect("Selecione o gênero:", dados["GENERO"].unique(), key="genero_filter")
-    estado_civil_filter3 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter2")
+    genero_filter2 = st.multiselect("Selecione o gênero:", df_eda["GENERO"].unique(), key="genero_filter")
+    estado_civil_filter3 = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique(), key="estado_civil_filter2")
     idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64), key = "idade_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados3 = dados[
-        (dados["GENERO"].isin(genero_filter)) &
-        (dados["ESTADO_CIVIL"].isin(estado_civil_filter)) &
-        (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1])
+    filtered_dados3 = df_eda[
+        (df_eda["GENERO"].isin(genero_filter)) &
+        (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter)) &
+        (df_eda["IDADE_ANOS"] >= idade_filter[0]) & (df_eda["IDADE_ANOS"] <= idade_filter[1])
     ]
 
     # Calculando as proporções
@@ -351,13 +358,13 @@ with aba3:
     
     # Filtros interativos
     st.subheader("Gráfico de Barras Empilhadas Interativo")
-    moradia_filter = st.multiselect("Selecione o tipo de moradia:", dados["TIPO_DE_MORADIA"].unique(), key="moradia_filter")
-    escolaridade_filter = st.multiselect("Selecione o nível de escolaridade:", dados["ESCOLARIDADE"].unique(), key="escolaridade_filter")
+    moradia_filter = st.multiselect("Selecione o tipo de moradia:", df_eda["TIPO_DE_MORADIA"].unique(), key="moradia_filter")
+    escolaridade_filter = st.multiselect("Selecione o nível de escolaridade:", df_eda["ESCOLARIDADE"].unique(), key="escolaridade_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados4 = dados[
-        (dados["TIPO_DE_MORADIA"].isin(moradia_filter)) &
-        (dados["ESCOLARIDADE"].isin(escolaridade_filter))
+    filtered_dados4 = df_eda[
+        (df_eda["TIPO_DE_MORADIA"].isin(moradia_filter)) &
+        (df_eda["ESCOLARIDADE"].isin(escolaridade_filter))
     ]
 
     # Criando o gráfico de barras empilhadas interativo
@@ -377,7 +384,7 @@ with aba3:
     
     st.subheader('Gráfico de Barras - Relação entre Target e Estado Civil')
     fig9 = px.bar(
-        dados,
+        df_eda,
         x="ESTADO_CIVIL",
         color="TARGET",
         title="Relação entre Target e Estado Civil",
@@ -390,11 +397,11 @@ with aba3:
     
     st.subheader("Gráfico de Dispersão - Rendimento Anual vs. Idade (Colorido por Target)")
     # Filtro interativo para selecionar a cor (TARGET)
-    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter")
+    color_filter = st.selectbox("Selecione a coluna para colorir:", df_eda.columns, key="color_filter")
 
     # Criando o gráfico de dispersão interativo
     fig10 = px.scatter(
-        dados,
+        df_eda,
         x="IDADE_ANOS",
         y="RENDIMENTO_ANUAL",
         color=color_filter,
@@ -408,11 +415,11 @@ with aba3:
     
     st.subheader("Gráfico de Dispersão - Rendimento Anual X Cargo")
     # Filtro interativo para selecionar a cor (TARGET)
-    color_filter2 = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter2")
+    color_filter2 = st.selectbox("Selecione a coluna para colorir:", df_eda.columns, key="color_filter2")
 
     # Criando o gráfico de dispersão interativo
     fig14 = px.scatter(
-        dados,
+        df_eda,
         x="CARGO",
         y="RENDIMENTO_ANUAL",
         color=color_filter2,
@@ -427,11 +434,11 @@ with aba3:
     st.subheader("Gráfico de Dispersão - Distribuição de Escolaridade por Target")
 
     # Filtro interativo para selecionar a cor (TARGET)
-    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter1")
+    color_filter = st.selectbox("Selecione a coluna para colorir:", df_eda.columns, key="color_filter1")
 
     # Criando o gráfico de dispersão interativo
     fig11 = px.bar(
-        dados,
+        df_eda,
         x="ESCOLARIDADE",
         color=color_filter,
         title="Distribuição de Escolaridade por Target",
@@ -444,7 +451,7 @@ with aba3:
     
     st.subheader("Gráfico de barras - Distribuição de gênero por Target")
     fig12 = px.bar(
-        dados,
+        df_eda,
         x="GENERO",
         color="TARGET",
         title="Proporção de Gênero por Target",
@@ -457,7 +464,7 @@ with aba3:
     
     st.subheader("Gráfico de barras - Distribuição de cargo por Target")
     fig13 = px.bar(
-    dados,
+    df_eda,
     x="CARGO",
     color="TARGET",
     title="Proporção de Cargo por Target",
@@ -470,7 +477,7 @@ with aba3:
     
     st.subheader("Gráfico de barras - Distribuição de possui propriedades por Target")
     fig13 = px.bar(
-    dados,
+    df_eda,
     x="POSSUI_PROPRIEDADES",
     color="TARGET",
     title="Proporção de possui proriedade por Target",

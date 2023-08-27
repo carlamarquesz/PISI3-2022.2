@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 50000)
+dados = pd.read_csv("./data/credit_card_approval.csv")
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -146,4 +146,11 @@ def criar_radio_com_chave_unica(texto, opcoes, chave):
 
 
 
+df_eda = dados.copy()
+
+df_eda = df_eda.drop(columns='QTD_MESES')
+# df_eda = df_eda.drop(columns='STATUS_PAGAMENTO')
+# df_eda.loc[df_eda.duplicated(keep=False)]
+
+df_eda = df_eda.drop_duplicates()
 

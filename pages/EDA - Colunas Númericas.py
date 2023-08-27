@@ -10,13 +10,12 @@ from PIL import Image
 columns = [
         "RENDIMENTO_ANUAL",
         "ANOS_EMPREGADO",
-        "QTD_MESES",
         "SALARIO",
     
 ]
 
 def main():
-    total = len(dados)
+    # total = len(dados)
     # column = st.selectbox('Selecione a coluna:', rotulos_keys_colunas_numericas)
     # column_select = rotulos.get(column)
     column_select = st.selectbox('Selecione a coluna:', columns)
@@ -24,9 +23,9 @@ def main():
                           max_value=len(dados), value=5)
 
     dados_selecionados = dados.head(qtd_dados)
-    st.subheader(f'Quantidade de dados selecionado para análise: {qtd_dados}/{total} total')
+    # st.subheader(f'Quantidade de dados selecionado para análise: {qtd_dados}/{total} total')
     
-    create_interactive_visualization(dados, column_select)
+    create_interactive_visualization(dados_selecionados, column_select)
 
 
 def IQR(dados, coluna):
