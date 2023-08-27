@@ -9,7 +9,7 @@ from graphics import *
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
-aba1, aba2, aba3, aba4 = st.tabs(["Estatística geral", "Histórico de atrasos", "Outliers", "Gráficos"])
+aba1, aba2, aba3 = st.tabs(["Estatística geral", "Outliers", "Gráficos"])
 
 # Estatisca geral
 with aba1:
@@ -117,40 +117,40 @@ with aba1:
             st.write("O gráfico analisa a relação entre o nível de escolaridade dos indivíduos e seu histórico de pagamento. É possível identificar quais níveis de escolaridade estão associados a um maior risco de inadimplência, auxiliando na tomada de decisões relacionadas à concessão de crédito") 
 
 # Histórico de atrasos
-with aba2:
-    st.subheader("Histórico de atrasos")
-    opcoes_qtd_meses = np.sort(dados["QTD_MESES"].unique().astype(int))
-    filtro_qtd_meses = st.selectbox("Selecione o valor de meses:", opcoes_qtd_meses)
-    st.subheader(f"Atrasos de pagamento {texto(filtro_qtd_meses)}")
-    # Condições de filtro para STATUS_PAGAMENTO
-    status_pagamento = ["X", "C", "5", "4", "3", "2", "1", "0"]
-    lista = []
-    # Filtrar dados de acordo com o valor de meses
-    for i in status_pagamento:
-        dados_filtrados = len(
-            dados.loc[
-                (dados["QTD_MESES"] == filtro_qtd_meses)
-                & (dados["STATUS_PAGAMENTO"] == i)
-            ]
-        )
-        lista.append(dados_filtrados)
-    # Exibir dados filtrados
-    coluna1, coluna2, coluna3, coluna4 = st.columns(4)
-    with coluna1:
-        st.metric("Não pediram empréstimo \n\nno mês", lista[0])
-        st.metric("Estão em dia com \n\no empréstimo", lista[1])
-    with coluna2:
-        st.metric("Estão com empréstimo \n\nvencido", lista[7])
-        st.metric("Estão com 120 a 149 dias \n\nde atraso", lista[2])
-    with coluna3:
-        st.metric("Estão com 90 a 119 dias \n\nde atraso", lista[3])
-        st.metric("Estão com 60 a 89 dias \n\nde atraso", lista[4])
-    with coluna4:
-        st.metric("Estão com 30 à 59 dias \n\nde atraso", lista[5])
-        st.metric("Estão com 1 a 29 dias \n\nde atraso", lista[6])
+# with aba2:
+#     st.subheader("Histórico de atrasos")
+#     opcoes_qtd_meses = np.sort(dados["QTD_MESES"].unique().astype(int))
+#     filtro_qtd_meses = st.selectbox("Selecione o valor de meses:", opcoes_qtd_meses)
+#     st.subheader(f"Atrasos de pagamento {texto_filtro(filtro_qtd_meses)}")
+#     # Condições de filtro para STATUS_PAGAMENTO
+#     status_pagamento = ["X", "C", "5", "4", "3", "2", "1", "0"]
+#     lista = []
+#     # Filtrar dados de acordo com o valor de meses
+#     for i in status_pagamento:
+#         dados_filtrados = len(
+#             dados.loc[
+#                 (dados["QTD_MESES"] == filtro_qtd_meses)
+#                 & (dados["STATUS_PAGAMENTO"] == i)
+#             ]
+#         )
+#         lista.append(dados_filtrados)
+#     # Exibir dados filtrados
+#     coluna1, coluna2, coluna3, coluna4 = st.columns(4)
+#     with coluna1:
+#         st.metric("Não pediram empréstimo \n\nno mês", lista[0])
+#         st.metric("Estão em dia com \n\no empréstimo", lista[1])
+#     with coluna2:
+#         st.metric("Estão com empréstimo \n\nvencido", lista[7])
+#         st.metric("Estão com 120 a 149 dias \n\nde atraso", lista[2])
+#     with coluna3:
+#         st.metric("Estão com 90 a 119 dias \n\nde atraso", lista[3])
+#         st.metric("Estão com 60 a 89 dias \n\nde atraso", lista[4])
+#     with coluna4:
+#         st.metric("Estão com 30 à 59 dias \n\nde atraso", lista[5])
+#         st.metric("Estão com 1 a 29 dias \n\nde atraso", lista[6])
 
 # Outliers
-with aba3:
+with aba2:
     st.subheader("Gráficos de Outliers") 
     columns_options = ['Rendimento Anual', 'Meses de Cadastro', 'Idade']
     selected = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
@@ -174,7 +174,7 @@ with aba3:
                 df_scatter = df_copy_scatter.head(qtd_dados_scatter) 
                 simbol = st.selectbox('selecione o simbolo para os outlirs',['circle', 'square', 'diamond', 'cross', 'x', 'triangle-up'])
                 st.write(" ")
-                outliers = identify_outliers(df_scatter, selected_column)
+                outliers = identificar_outliers(df_scatter, selected_column)
                 color = st.color_picker('Escolhar a cor dos outlirs', '#00f900')
             with coluna2:
                 fig_scatter = px.scatter(df_scatter, x=df_scatter.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
@@ -241,7 +241,7 @@ with aba3:
 
     graficos_outliers(selected_column)
 
-with aba4:
+with aba3:
     st.subheader("Gráficos")
     fig5 = px.histogram(dados, x = 'IDADE_ANOS')
     st.plotly_chart(fig5, use_container_width=True)
