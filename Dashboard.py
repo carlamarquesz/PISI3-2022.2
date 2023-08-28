@@ -4,8 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from utils import *
-from graphics import *
-# from data_visualization.data_for_analysis_streamlit import *
+from graphics import * 
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
@@ -115,39 +114,6 @@ with aba1:
         st.plotly_chart(fig4, use_container_width=True) 
         with st.expander("Descrição"):
             st.write("O gráfico analisa a relação entre o nível de escolaridade dos indivíduos e seu histórico de pagamento. É possível identificar quais níveis de escolaridade estão associados a um maior risco de inadimplência, auxiliando na tomada de decisões relacionadas à concessão de crédito") 
-
-# Histórico de atrasos
-# with aba2:
-#     st.subheader("Histórico de atrasos")
-#     opcoes_qtd_meses = np.sort(dados["QTD_MESES"].unique().astype(int))
-#     filtro_qtd_meses = st.selectbox("Selecione o valor de meses:", opcoes_qtd_meses)
-#     st.subheader(f"Atrasos de pagamento {texto_filtro(filtro_qtd_meses)}")
-#     # Condições de filtro para STATUS_PAGAMENTO
-#     status_pagamento = ["X", "C", "5", "4", "3", "2", "1", "0"]
-#     lista = []
-#     # Filtrar dados de acordo com o valor de meses
-#     for i in status_pagamento:
-#         dados_filtrados = len(
-#             dados.loc[
-#                 (dados["QTD_MESES"] == filtro_qtd_meses)
-#                 & (dados["STATUS_PAGAMENTO"] == i)
-#             ]
-#         )
-#         lista.append(dados_filtrados)
-#     # Exibir dados filtrados
-#     coluna1, coluna2, coluna3, coluna4 = st.columns(4)
-#     with coluna1:
-#         st.metric("Não pediram empréstimo \n\nno mês", lista[0])
-#         st.metric("Estão em dia com \n\no empréstimo", lista[1])
-#     with coluna2:
-#         st.metric("Estão com empréstimo \n\nvencido", lista[7])
-#         st.metric("Estão com 120 a 149 dias \n\nde atraso", lista[2])
-#     with coluna3:
-#         st.metric("Estão com 90 a 119 dias \n\nde atraso", lista[3])
-#         st.metric("Estão com 60 a 89 dias \n\nde atraso", lista[4])
-#     with coluna4:
-#         st.metric("Estão com 30 à 59 dias \n\nde atraso", lista[5])
-#         st.metric("Estão com 1 a 29 dias \n\nde atraso", lista[6])
 
 # Outliers
 with aba2:
