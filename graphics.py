@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 50000)
+dados = pd.read_csv("./data/credit_card_approval.csv")
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -43,9 +43,9 @@ dados["ANOS_EMPREGADO"] = dados["POSSUI_EMPREGO"].copy()
 dados["ANOS_EMPREGADO"] = (dados["ANOS_EMPREGADO"] / -365.25).round(0).astype(int)
 dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
 dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["TELEFONE_COMERCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["TELEFONE_RESIDENCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["EMAIL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["TELEFONE_COMERCIAL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
+dados["TELEFONE_RESIDENCIAL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
+dados["EMAIL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
 dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
 dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True),
 
@@ -143,6 +143,15 @@ dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
 import streamlit as st
 def criar_radio_com_chave_unica(texto, opcoes, chave):
     return st.radio(texto, opcoes, key=chave)
+
+
+df_eda = dados.copy()
+
+df_eda = df_eda.drop(columns='QTD_MESES')
+# df_eda = df_eda.drop(columns='STATUS_PAGAMENTO')
+# df_eda.loc[df_eda.duplicated(keep=False)]
+
+df_eda = df_eda.drop_duplicates()
 
 
 
