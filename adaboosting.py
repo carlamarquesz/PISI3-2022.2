@@ -60,6 +60,13 @@ print(dados.columns)
 importancias_medias = atributos_importantes(classificador_adaboost)
 print(importancias_medias) 
 
+#Classificando os clientes mais propensos a receberem crédito
+probabilidades = classificador_adaboost.predict_proba(X_test)[:, 1]
+clientes_ordenados = np.argsort(probabilidades)[::-1]
+limiar = 0.5
+clientes_propensos = clientes_ordenados[probabilidades[clientes_ordenados] > limiar]
+print("Clientes mais propensos:", clientes_propensos) 
+
 # Salvando a imagem da árvore simples 
 # salvar_arvore(classificador_adaboost.estimators_[0], "adaboost1")
 # salvar_arvore(classificador_adaboost.estimators_[1], "adaboost2")
