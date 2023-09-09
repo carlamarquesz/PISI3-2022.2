@@ -8,7 +8,7 @@ from graphics import *
 
 st.set_page_config(layout="wide")
 st.title("Dashboard ST Credit :coin:")
-aba1, aba2, aba3 = st.tabs(["Estatística geral", "Outliers", "Gráficos"])
+aba1, aba2 = st.tabs(["Estatística geral", "Gráficos"])
 
 # Estatisca geral
 with aba1:
@@ -115,125 +115,34 @@ with aba1:
         with st.expander("Descrição"):
             st.write("O gráfico analisa a relação entre o nível de escolaridade dos indivíduos e seu histórico de pagamento. É possível identificar quais níveis de escolaridade estão associados a um maior risco de inadimplência, auxiliando na tomada de decisões relacionadas à concessão de crédito") 
 
-# Outliers
 with aba2:
-    st.subheader("Gráficos de Outliers") 
-    columns_options = ['Rendimento Anual', 'Meses de Cadastro', 'Idade']
-    selected = st.selectbox('Selecione a coluna para identificar outliers:', columns_options)
+    st.subheader("Nesta seção, iremos explorar gráficos que exibem correlações.")
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    select_value_aba3 = st.slider(label='Selecione a quantidade de dados para analisar do dataset', min_value=1,
+                          max_value=len(df_eda), value=100)
 
-    selected_column = None
-    if selected == 'Rendimento Anual':
-        selected_column = 'RENDIMENTO_ANUAL'
-    elif selected == 'Meses de Cadastro':
-        selected_column = 'QTD_MESES'
-    elif selected == 'Idade':
-        selected_column  = 'IDADE_ANOS'
-
-    def graficos_outliers(selected_column):
-
-        def plot_outliers_scatter(selected_column):
-            coluna2, coluna3 =  st.columns([0.7,.3])
-            df_copy_scatter = dados.copy()
-            with coluna3:
-                with st.expander('Selecione a quantidade de  dados a exibir'):
-                    qtd_dados_scatter = st.slider("", min_value=1, max_value=len(dados), value=50, key='1')
-                df_scatter = df_copy_scatter.head(qtd_dados_scatter) 
-                simbol = st.selectbox('selecione o simbolo para os outlirs',['circle', 'square', 'diamond', 'cross', 'x', 'triangle-up'])
-                st.write(" ")
-                outliers = identificar_outliers(df_scatter, selected_column)
-                color = st.color_picker('Escolhar a cor dos outlirs', '#00f900')
-            with coluna2:
-                fig_scatter = px.scatter(df_scatter, x=df_scatter.index, y=selected_column, title='Gráfico de Dispersão com Outliers', labels={'x': 'Índice', 'y': selected_column})
-                fig_scatter.add_scatter(x=outliers.index, y=outliers[selected_column], mode='markers', name='Outliers', marker=dict(color=color, size=10, symbol=simbol))
-                st.plotly_chart(fig_scatter)
-
-        plot_outliers_scatter(selected_column) 
-
-        def plot_outlirs_box_violion():
-            coluna1, coluna2 =  st.columns([0.7,.3])
-            df_copy_box_violion = dados.copy()   
-            df_copy_box_violion.rename(columns={'RENDIMENTO_ANUAL':'Rendimento Anual', 'GENERO':'Gênero', 'ESCOLARIDADE':'Escolaridade', 'TIPO_DE_MORADIA':'Tipo de moradia', 'QTD_FILHOS':'Quantidade de filhos'}, inplace=True)   
-            with coluna2:
-                with st.expander('Selecione a quantidade de  dados a exibir'):
-                  qtd_dados_box_violion = st.slider('',min_value=1, max_value=len(dados), value=50, key='2')
-                tipo_grafico = st.radio(
-                    "Escolha o Gráfico:",
-                    ("box", "violin"))
-                
-                with st.expander('Filtre por:'):
-                    opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['Gênero', 'Faixa Etária', 'Escolaridade', 'Tipo de moradia', 'Quantidade de filhos'] ,chave= 'opcfiltro')
-
-                # opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opcfiltro')
-
-            with coluna1:
-                # opc = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opcfiltro')     
-                cargos_unicos = df_copy_box_violion['CARGO'].unique()
-                cargo_selecionado = st.selectbox('Selecione o tipo de cargo:',cargos_unicos)
-                df_cargo = df_copy_box_violion[df_copy_box_violion['CARGO'] == cargo_selecionado]
-                df_cargo = df_cargo.head(qtd_dados_box_violion) 
-                grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual',color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
-                if tipo_grafico == "box":
-                    grafico = px.box(df_cargo,x="CARGO", y='Rendimento Anual', color=opc, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}')
-                elif tipo_grafico == "violin":
-                    grafico = px.violin(df_cargo,x="CARGO", y='Rendimento Anual', color=opc,violinmode= "group", points="outliers",box= True, title=f'Distribuição de Rendimentos Anuais para {cargo_selecionado} por {opc}', )
-                st.plotly_chart(grafico)
-
-        if selected_column == 'RENDIMENTO_ANUAL':
-            plot_outlirs_box_violion()
-
-        def plot_outlirs_histogram(selected_column):
-            coluna1, coluna2 =  st.columns([0.7,.3])
-            df_copy_histogram = dados.copy()
-            df_copy_histogram.rename(columns={'GENERO':'Gênero', 'ESCOLARIDADE':'Escolaridade', 'IDADE_ANOS':'Idade', 'QTD_FILHOS':'Quantidade de filhos'}, inplace=True)
-            df_copy_histogram['IDADE_ANOS'] = df_copy_histogram['Idade'].copy()  
-            with coluna2:
-                with st.expander('Selecione a quantidade de  dados a exibir'):
-                    qtd_dados_histogram = st.slider("Selecione a quantidade de  dados que serão exibidas:", min_value=1, max_value=len(dados), value=50, key= '3')
-                
-                df_histogram = df_copy_histogram.head(qtd_dados_histogram)  
-                colunas_color = ['Gênero', 'Faixa Etária', 'Escolaridade', 'Idade', 'Quantidade de filhos']        
-                colunas_selecionadas = st.multiselect("Selecione as colunas para colorir:", colunas_color)
-                df_histogram['ColorGroup'] = df_histogram[colunas_selecionadas].apply(lambda row: ' - '.join(row.values.astype(str)), axis=1)
-
-                #     opc1 = criar_radio_com_chave_unica(texto="Escolha por Filtro para o histogram:", opcoes=['GENERO', 'Faixa Etária', 'Escolaridade'] ,chave= 'opc1filtro')
-            with coluna1:  
-                fig_histogram = px.histogram(df_histogram, x=selected_column, color='ColorGroup', title='Histograma' )
-                fig_histogram.update_layout(
-                                                xaxis_title=f"{selected_column}",
-                                                yaxis_title="Contagem"
-                                            )
-                st.plotly_chart(fig_histogram)
-        plot_outlirs_histogram(selected_column)
-
-    graficos_outliers(selected_column)
-
-with aba3:
-    st.subheader("Gráficos")
-    fig5 = px.histogram(dados, x = 'IDADE_ANOS')
-    st.plotly_chart(fig5, use_container_width=True)
+    st.subheader(f"Quantidade de dados para análise do dataset: {select_value_aba3}")
+    df_eda = df_eda.head(select_value_aba3)
     
-    fig7 = px.histogram(dados, x = 'SALARIO')
-    st.plotly_chart(fig7, use_container_width=True)
-    
-    grafico = px.scatter_matrix(dados, dimensions=['IDADE_ANOS', 'SALARIO','ESTADO_CIVIL'], color = 'TARGET')
+    grafico = px.scatter_matrix(df_eda, dimensions=['IDADE_ANOS', 'SALARIO','ESTADO_CIVIL'], color = 'TARGET')
     st.plotly_chart(grafico, use_container_width=True)
     with st.expander('Descrição'):
         st.write("grafico que mostra a relação da idade, salario mensal, estado civil com a aprovação de cartão")
     
-    grafico2 = px.parallel_categories(dados, dimensions=['CARGO', 'ESTADO_CIVIL'])
+    grafico2 = px.parallel_categories(df_eda, dimensions=['CARGO', 'ESTADO_CIVIL'])
     st.plotly_chart(grafico2, use_container_width=True)
     
     st.subheader("Gráfico de Barras Interativo com Filtros")
     # Filtros interativos
     idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64))
-    escolaridade_filter = st.multiselect("Selecione a escolaridade:", dados["ESCOLARIDADE"].unique())
-    estado_civil_filter = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique())
+    escolaridade_filter = st.multiselect("Selecione a escolaridade:", df_eda["ESCOLARIDADE"].unique())
+    estado_civil_filter = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique())
    
     # Aplicando os filtros ao DataFrame
-    filtered_dados = dados[
-    (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1]) &
-    (dados["ESCOLARIDADE"].isin(escolaridade_filter)) &
-    (dados["ESTADO_CIVIL"].isin(estado_civil_filter))
+    filtered_dados = df_eda[
+    (df_eda["IDADE_ANOS"] >= idade_filter[0]) & (df_eda["IDADE_ANOS"] <= idade_filter[1]) &
+    (df_eda["ESCOLARIDADE"].isin(escolaridade_filter)) &
+    (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter))
     ]
     
     fig6 = px.histogram(filtered_dados, x="GENERO", title="Distribuição de Gênero")
@@ -241,13 +150,13 @@ with aba3:
     
     st.subheader("Gráfico de Dispersão Interativo")
     # Filtros interativos
-    genero_filter = st.multiselect("Selecione o gênero:", dados["GENERO"].unique())
-    estado_civil_filter2 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter")
+    genero_filter = st.multiselect("Selecione o gênero:", df_eda["GENERO"].unique())
+    estado_civil_filter2 = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique(), key="estado_civil_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados2 = dados[
-        (dados["GENERO"].isin(genero_filter)) &
-        (dados["ESTADO_CIVIL"].isin(estado_civil_filter2))
+    filtered_dados2 = df_eda[
+        (df_eda["GENERO"].isin(genero_filter)) &
+        (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter2))
     ]
 
     # Criando o gráfico de dispersão interativo
@@ -269,15 +178,15 @@ with aba3:
     
     st.subheader("Gráfico de Pizza Interativo")
     # Filtros interativos
-    genero_filter2 = st.multiselect("Selecione o gênero:", dados["GENERO"].unique(), key="genero_filter")
-    estado_civil_filter3 = st.multiselect("Selecione o estado civil:", dados["ESTADO_CIVIL"].unique(), key="estado_civil_filter2")
+    genero_filter2 = st.multiselect("Selecione o gênero:", df_eda["GENERO"].unique(), key="genero_filter")
+    estado_civil_filter3 = st.multiselect("Selecione o estado civil:", df_eda["ESTADO_CIVIL"].unique(), key="estado_civil_filter2")
     idade_filter = st.slider("Selecione a faixa de idade:", min_value=20, max_value=64, value=(20, 64), key = "idade_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados3 = dados[
-        (dados["GENERO"].isin(genero_filter)) &
-        (dados["ESTADO_CIVIL"].isin(estado_civil_filter)) &
-        (dados["IDADE_ANOS"] >= idade_filter[0]) & (dados["IDADE_ANOS"] <= idade_filter[1])
+    filtered_dados3 = df_eda[
+        (df_eda["GENERO"].isin(genero_filter)) &
+        (df_eda["ESTADO_CIVIL"].isin(estado_civil_filter)) &
+        (df_eda["IDADE_ANOS"] >= idade_filter[0]) & (df_eda["IDADE_ANOS"] <= idade_filter[1])
     ]
 
     # Calculando as proporções
@@ -317,13 +226,13 @@ with aba3:
     
     # Filtros interativos
     st.subheader("Gráfico de Barras Empilhadas Interativo")
-    moradia_filter = st.multiselect("Selecione o tipo de moradia:", dados["TIPO_DE_MORADIA"].unique(), key="moradia_filter")
-    escolaridade_filter = st.multiselect("Selecione o nível de escolaridade:", dados["ESCOLARIDADE"].unique(), key="escolaridade_filter")
+    moradia_filter = st.multiselect("Selecione o tipo de moradia:", df_eda["TIPO_DE_MORADIA"].unique(), key="moradia_filter")
+    escolaridade_filter = st.multiselect("Selecione o nível de escolaridade:", df_eda["ESCOLARIDADE"].unique(), key="escolaridade_filter")
 
     # Aplicando os filtros ao DataFrame
-    filtered_dados4 = dados[
-        (dados["TIPO_DE_MORADIA"].isin(moradia_filter)) &
-        (dados["ESCOLARIDADE"].isin(escolaridade_filter))
+    filtered_dados4 = df_eda[
+        (df_eda["TIPO_DE_MORADIA"].isin(moradia_filter)) &
+        (df_eda["ESCOLARIDADE"].isin(escolaridade_filter))
     ]
 
     # Criando o gráfico de barras empilhadas interativo
@@ -343,7 +252,7 @@ with aba3:
     
     st.subheader('Gráfico de Barras - Relação entre Target e Estado Civil')
     fig9 = px.bar(
-        dados,
+        df_eda,
         x="ESTADO_CIVIL",
         color="TARGET",
         title="Relação entre Target e Estado Civil",
@@ -351,34 +260,15 @@ with aba3:
     )
 
     # Exibindo o gráfico
-    st.plotly_chart(fig9, use_container_width=True)
-    
-    
-    st.subheader("Gráfico de Dispersão - Rendimento Anual vs. Idade (Colorido por Target)")
-    # Filtro interativo para selecionar a cor (TARGET)
-    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter")
-
-    # Criando o gráfico de dispersão interativo
-    fig10 = px.scatter(
-        dados,
-        x="IDADE_ANOS",
-        y="RENDIMENTO_ANUAL",
-        color=color_filter,
-        title="Rendimento Anual vs. Idade (Colorido por Target)",
-        labels={"IDADE_ANOS": "Idade (anos)", "RENDIMENTO_ANUAL": "Rendimento Anual"}
-    )
-
-    # Exibindo o gráfico
-    st.plotly_chart(fig10, use_container_width=True)
-    
+    st.plotly_chart(fig9, use_container_width=True) 
     
     st.subheader("Gráfico de Dispersão - Rendimento Anual X Cargo")
     # Filtro interativo para selecionar a cor (TARGET)
-    color_filter2 = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter2")
+    color_filter2 = st.selectbox("Selecione a coluna para colorir:", df_eda.columns, key="color_filter2")
 
     # Criando o gráfico de dispersão interativo
     fig14 = px.scatter(
-        dados,
+        df_eda,
         x="CARGO",
         y="RENDIMENTO_ANUAL",
         color=color_filter2,
@@ -393,11 +283,11 @@ with aba3:
     st.subheader("Gráfico de Dispersão - Distribuição de Escolaridade por Target")
 
     # Filtro interativo para selecionar a cor (TARGET)
-    color_filter = st.selectbox("Selecione a coluna para colorir:", dados.columns, key="color_filter1")
+    color_filter = st.selectbox("Selecione a coluna para colorir:", df_eda.columns, key="color_filter1")
 
     # Criando o gráfico de dispersão interativo
     fig11 = px.bar(
-        dados,
+        df_eda,
         x="ESCOLARIDADE",
         color=color_filter,
         title="Distribuição de Escolaridade por Target",
@@ -410,7 +300,7 @@ with aba3:
     
     st.subheader("Gráfico de barras - Distribuição de gênero por Target")
     fig12 = px.bar(
-        dados,
+        df_eda,
         x="GENERO",
         color="TARGET",
         title="Proporção de Gênero por Target",
@@ -421,22 +311,11 @@ with aba3:
     # Exibindo o gráfico
     st.plotly_chart(fig12, use_container_width=True)
     
-    st.subheader("Gráfico de barras - Distribuição de cargo por Target")
-    fig13 = px.bar(
-    dados,
-    x="CARGO",
-    color="TARGET",
-    title="Proporção de Cargo por Target",
-    labels={"TARGET": "Target", "CARGO": "Cargo"},
-    orientation='v'
-    )
 
-    # Exibindo o gráfico
-    st.plotly_chart(fig13, use_container_width=True)
     
     st.subheader("Gráfico de barras - Distribuição de possui propriedades por Target")
     fig13 = px.bar(
-    dados,
+    df_eda,
     x="POSSUI_PROPRIEDADES",
     color="TARGET",
     title="Proporção de possui proriedade por Target",
