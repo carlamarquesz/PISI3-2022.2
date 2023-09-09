@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 # Dados qualitativos para usar nos gráficos
-dados = pd.read_csv("./data/credit_card_approval.csv", nrows = 50000)
+dados = pd.read_csv("./data/credit_card_approval.csv")
 # dados = pd.read_parquet("./data/credit_card_approval.parquet")
 
 
@@ -43,9 +43,9 @@ dados["ANOS_EMPREGADO"] = dados["POSSUI_EMPREGO"].copy()
 dados["ANOS_EMPREGADO"] = (dados["ANOS_EMPREGADO"] / -365.25).round(0).astype(int)
 dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
 dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["TELEFONE_COMERCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["TELEFONE_RESIDENCIAL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
-dados["EMAIL"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
+dados["TELEFONE_COMERCIAL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
+dados["TELEFONE_RESIDENCIAL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
+dados["EMAIL"].replace({1: 'Sim', 0: 'Não'}, inplace=True)
 dados["POSSUI_CARRO"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True)
 dados["POSSUI_PROPRIEDADES"].replace({"Y": 'Sim', "N": 'Não'}, inplace=True),
 
@@ -125,25 +125,20 @@ dados["QTD_MESES"] = (dados["QTD_MESES"] * (-1))
 dados['SALARIO'] = dados['RENDIMENTO_ANUAL'] / 12
 
 
-# # VERIFICANDO VALORES CONTIDOS NAS COLUNAS ESCOLHIDAS
-# def verificar_valores_unicos(col, dataset):
-#     for indx, coluna in enumerate(col):
-#         print(f'valores contidos na coluna "{col[indx]}":{dataset[coluna].unique()}')
 
-
-# # COLUNAS DESEJADAS 
-# col =  ['GENERO', 'POSSUI_CARRO', 'POSSUI_PROPRIEDADES', 'QTD_FILHOS',
-#       'ESCOLARIDADE', 'ESTADO_CIVIL', 'TIPO_DE_MORADIA',
-#       'CELULAR', 'TELEFONE_COMERCIAL',
-#        'TELEFONE_RESIDENCIAL', 'EMAIL', 'CARGO',
-#        'STATUS_PAGAMENTO', 'TARGET']
-
-# print(verificar_valores_unicos(col, dados))
-
-import streamlit as st
 def criar_radio_com_chave_unica(texto, opcoes, chave):
+    import streamlit as st
     return st.radio(texto, opcoes, key=chave)
 
 
+df_att = dados.copy()
 
+df_att = df_att.drop(columns='QTD_MESES')
+# df_eda.loc[df_eda.duplicated(keep=False)]
+df_att = df_att.drop_duplicates()
+
+
+df_eda = df_att.copy()
+df_analise_risco = df_att.copy()
+df_analise_financeira = df_att.copy()
 
