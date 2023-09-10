@@ -10,4 +10,3 @@ st.subheader('Objetivos especificos')
 st.markdown('- Prever aprovação de crédito;')
 st.markdown('- Realizar uma análise exploratória dos dados, identificando características importantes e padrões de comportamento dos clientes;')
 st.markdown('- Identificar segmentações de clientes com base nos dados disponíveis, permitindo o desenvolvimento de estratégias personalizadas.')
-
