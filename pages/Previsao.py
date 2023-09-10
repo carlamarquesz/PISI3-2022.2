@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from utils import *
-from arvore_decisao import *
+from SVM import *
 
 def carregar_dados():
     data = pd.read_parquet("./data/credit_card_approval.parquet")
@@ -107,7 +107,7 @@ def main():
         solicitante = np.array(lista)
 
         # Exibir o resultado da análise
-        resultado = executar_classificador(classificador_arvore_decisao, X_train, [solicitante], y_train)
+        resultado = executar_classificador_svm(X_train, [solicitante], y_train)
         print(resultado)
         mostrar_resultados(resultado, dados_usuario["nome"], acuracia, precisao, recall, matrix_confusao)
 
