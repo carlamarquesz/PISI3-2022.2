@@ -7,12 +7,7 @@ import numpy as np
 import plotly.express as px
 from PIL import Image
 
-columns = [
-        "RENDIMENTO_ANUAL",
-        "ANOS_EMPREGADO",
-        "IDADE_ANOS",
-        "SALARIO",   
-      ]
+columns = dados.columns[[5,21,9,23]].tolist()
 
 def main():
     total = len(dados)
@@ -76,7 +71,7 @@ def create_interactive_visualization(dados, coluna):
         
     st.markdown("<br><br>", unsafe_allow_html=True)
 
-    st.subheader(f'Neste histograma podemos visualizar o e escolher o intervalo da coluna {coluna} conforme desejado')
+    st.subheader(f'Neste histograma podemos visualizar e escolher o intervalo da coluna {coluna} conforme desejado')
     valormin = float(dados[coluna].min())
     valormax = float(dados[coluna].max())
     colors = st.selectbox('Selecione a cor do histogram:', [None, "red", "green", "blue", "purple", "orange"])

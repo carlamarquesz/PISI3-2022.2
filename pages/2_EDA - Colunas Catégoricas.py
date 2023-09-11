@@ -7,24 +7,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 from EDA.utils_EDA import *
 
-# Colunas categoricas para analise individual
-columns =   [   
-            "GENERO",
-            "POSSUI_CARRO",
-            "POSSUI_PROPRIEDADES",
-            "QTD_FILHOS",
-            "ESCOLARIDADE",
-            "ESTADO_CIVIL",
-            "TIPO_DE_MORADIA",
-            "CELULAR",
-            "TELEFONE_COMERCIAL",
-            "TELEFONE_RESIDENCIAL",
-            "EMAIL",
-            "CARGO",
-            "STATUS_PAGAMENTO",
-            "VARIAVEL_TARGET",
-            "FAIXA_ETARIA"
-            ]
+columns = dados.columns[[1,2,3,4,6,7,8,11,12,13,14,15,17,20,22]].tolist()
 
 def main():
     total = len(dados)

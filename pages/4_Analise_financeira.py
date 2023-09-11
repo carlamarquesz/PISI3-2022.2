@@ -37,7 +37,7 @@ def plot_outlirs_box_violion(qtd_dados):
         
         descricao = """
         <p style='text-align: justify; text-indent: 1.25em;'>
-         Podemos observar no gráfico box e se desejar o violion, o rendimento anual por cargos e selecionar por filtro se desejar.
+         Podemos observar no gráfico box ou violion, o rendimento anual por cargos e selecionar por filtro como desejar.
 
         </p>
         """
@@ -68,9 +68,10 @@ def tratar_outliers(data):
     return data
 
 def grafico_bar(tratar_outliers):
-    opc_select = st.selectbox('Selecione a coluna:', ['ESCOLARIDADE', 'TIPO_DE_MORADIA'])
-    dados['RENDIMENTO_ANUAL'] = dados.groupby(opc_select)['RENDIMENTO_ANUAL'].transform(tratar_outliers)
-    rendimento_medio = dados.groupby(opc_select)['RENDIMENTO_ANUAL'].mean().reset_index()
+    columns = df_analise_financeira.columns[[6,8]].tolist()
+    opc_select = st.selectbox('Selecione a coluna:', columns)
+    df_analise_financeira['RENDIMENTO_ANUAL'] = df_analise_financeira.groupby(opc_select)['RENDIMENTO_ANUAL'].transform(tratar_outliers)
+    rendimento_medio = df_analise_financeira.groupby(opc_select)['RENDIMENTO_ANUAL'].mean().reset_index()
 
     invert_axis = st.toggle('Inverta o Eixo: do gráfico de barras')
     if invert_axis:
